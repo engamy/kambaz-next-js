@@ -9,14 +9,16 @@ export default function AssignmentEditor() {
         />
         <br />
         <table>
-          <tr>
-            <td align="right" valign="top">
-              <label htmlFor="wd-points">Points</label>
-            </td>
-            <td>
-              <input id="wd-points" defaultValue={100} type="number" />
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td align="right" valign="top">
+                <label htmlFor="wd-points">Points</label>
+              </td>
+              <td>
+                <input id="wd-points" defaultValue={100} type="number" />
+              </td>
+            </tr>
+          </tbody>
         </table>
 
         <label htmlFor="wd-assignment-group">

@@ -88,8 +88,8 @@ export default function Lab1() {
             </tr>
           </thead>
           <tbody>
-            <tr>						{/* table row */}
-              <td>Q1</td>				{/* table data / cell */}
+            <tr>
+              <td>Q1</td>	
               <td>HTML</td>
               <td>2/3/21</td>
               <td>85</td>
@@ -156,6 +156,14 @@ export default function Lab1() {
             </tr>
           </tfoot>
         </table>
+      </div>
+
+      <div id="wd-images">
+        <h4>Image Tag</h4>
+        <p>Loading an image from the internet:</p>
+        <img src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg" alt="Starship" />
+        <p>Loading a local image:</p>
+        <img src="/images/teslabot.jpg" alt="Tesla Bot" />
       </div>
 
       <div id="wd-forms">

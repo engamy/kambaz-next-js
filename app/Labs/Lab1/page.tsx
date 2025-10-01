@@ -151,9 +151,9 @@ export default function Lab1() {
               <td>93</td>
             </tr>
           </tbody>
-          <tfoot>					{/* table row */}
+          <tfoot>
             <tr>
-              <td colSpan={3}>Average</td>	{/* column span */}
+              <td colSpan={3}>Average</td>
               <td>90</td>
             </tr>
           </tfoot>
@@ -163,9 +163,19 @@ export default function Lab1() {
       <div id="wd-images">
         <h4>Image Tag</h4>
         <p>Loading an image from the internet:</p>
-        <Image src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg" alt="Starship" />
+        <Image 
+          src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg" 
+          alt="Starship" 
+          width={400}
+          height={300}
+        />
         <p>Loading a local image:</p>
-        <Image src="/images/teslabot.jpg" alt="Tesla Bot" />
+        <Image 
+          src="/images/teslabot.jpg" 
+          alt="Tesla Bot" 
+          width={400}
+          height={300}
+        />
       </div>
 
       <div id="wd-forms">

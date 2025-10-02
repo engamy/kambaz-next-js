@@ -13,10 +13,18 @@ import Dimensions from "./Dimensions";
 import Positions from "./Positions";
 import Zindex from "./Zindex";
 import ReactIcons from "./ReactIcons";
+import BootstrapGrids from "./BootstrapGrids";
+import ScreenSizeLabel from "./ScreenSizeLabel";
+import BootstrapTables from "./BootstrapTables";
+import BootstrapLists from "./BootstrapLists";
+import BootstrapForms from "./BootstrapForms";
+import BootstrapNavigation from "./BootstrapNavigation";
+
+import { Container } from"react-bootstrap";
 
 export default function Lab2() {
   return (
-    <div id="wd-lab2">
+    <Container>
       <h2>Lab 2 - Cascading Style Sheets</h2>
       <h3>Styling with the STYLE attribute</h3>
       <p style={{ backgroundColor: "blue", color: "white" }}>
@@ -25,6 +33,8 @@ export default function Lab2() {
         it is considered bad practice and you should avoid
         using the style attribute
       </p>
+
+      {/* CSS Components */}
 
       <Selectors />
       <Foregroundcolors />
@@ -40,7 +50,14 @@ export default function Lab2() {
       <GridLayout />
       <Flex />
       <ReactIcons />
-      
-    </div>
+
+      {/* Bootstrap Components */}
+      <BootstrapGrids />
+      <ScreenSizeLabel />
+      <BootstrapTables />
+      <BootstrapLists />
+      <BootstrapForms />
+      <BootstrapNavigation />
+    </Container>
   );
 }

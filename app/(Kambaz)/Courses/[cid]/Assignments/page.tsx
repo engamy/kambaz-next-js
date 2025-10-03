@@ -5,7 +5,6 @@ import { FaEllipsisV, FaPlus, FaSearch, FaCheckCircle, FaFileAlt, FaChevronDown 
 export default function Assignments() {
     return (
       <div id="wd-assignments" className="p-4">
-        {/* Top Header Section */}
         <div className="d-flex align-items-center gap-3 mb-4">
           <div className="position-relative flex-fill">
             <FaSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" />
@@ -27,7 +26,6 @@ export default function Assignments() {
           </div>
         </div>
 
-        {/* Assignments Section */}
         <div className="wd-assignment-section mb-4">
           <div className="d-flex align-items-center justify-content-between mb-3">
             <div className="d-flex align-items-center gap-2">
@@ -123,7 +121,6 @@ export default function Assignments() {
           </div>
         </div>
 
-        {/* Additional Sections */}
         <div className="wd-assignment-section mb-4">
           <div className="d-flex align-items-center justify-content-between mb-3">
             <div className="d-flex align-items-center gap-2">

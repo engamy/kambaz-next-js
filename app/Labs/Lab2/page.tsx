@@ -34,7 +34,6 @@ export default function Lab2() {
         using the style attribute
       </p>
 
-      {/* CSS Components */}
 
       <Selectors />
       <Foregroundcolors />
@@ -51,7 +50,6 @@ export default function Lab2() {
       <Flex />
       <ReactIcons />
 
-      {/* Bootstrap Components */}
       <BootstrapGrids />
       <ScreenSizeLabel />
       <BootstrapTables />

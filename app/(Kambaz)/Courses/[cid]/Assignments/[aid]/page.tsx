@@ -7,7 +7,6 @@ export default function AssignmentEditor() {
       <Container className="mt-4">
         <div id="wd-assignments-editor" className="mr-5">
           <form>
-            {/* Assignment Name */}
             <div className="mb-3">
               <label htmlFor="wd-name" className="form-label">Assignment Name</label>
               <input 
@@ -18,7 +17,6 @@ export default function AssignmentEditor() {
               />
             </div>
 
-            {/* Assignment Description */}
             <div className="mb-4">
               <label htmlFor="wd-description" className="form-label">Assignment Description</label>
               <textarea 
@@ -39,7 +37,6 @@ The Kambas application should include a link to navigate back to the landing pag
               />
             </div>
 
-            {/* Configuration Section */}
             <Row className="mb-3">
               <Col md={2} className="text-end">
                 <label htmlFor="wd-points" className="form-label">Points</label>
@@ -78,7 +75,6 @@ The Kambas application should include a link to navigate back to the landing pag
               </select>
             </div>
 
-            {/* Online Entry Options */}
             <div className="ms-4 mb-4">
               <h5 className="mb-3">Online Entry Options</h5>
               <div className="mb-2">
@@ -134,7 +130,6 @@ The Kambas application should include a link to navigate back to the landing pag
               </div>
             </div>
 
-            {/* Assignment Dates Section */}
             <div className="mb-3">
               <label htmlFor="wd-assign-to" className="form-label">Assign to</label>
               <div className="border border-secondary rounded p-2 bg-white">
@@ -209,7 +204,6 @@ The Kambas application should include a link to navigate back to the landing pag
               </Col>
             </Row>
 
-            {/* Action Buttons */}
             <div className="d-flex justify-content-end gap-2">
               <Button variant="outline-secondary" className="px-4">
                 Cancel

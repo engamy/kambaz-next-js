@@ -148,7 +148,6 @@ body   {
     z-index: 1070;
     pointer-events: auto;
   }
-  /* Mobile navigation styling - only show on small screens */
   @media (max-width: 767px) {
     .wd-mobile-nav {
       display: flex;
@@ -180,7 +179,6 @@ body   {
     }
   }
   
-  /* Hide mobile nav on larger screens */
   @media (min-width: 768px) {
     .wd-mobile-nav {
       display: none;
@@ -192,7 +190,6 @@ body   {
       display: none !important;
     }
   }
-  /* Dropdown menu for Publish All */
   .wd-dropdown-menu {
     position: absolute;
     top: 100%;
@@ -226,7 +223,6 @@ body   {
     color: #000 !important;
   }
 
-  /* Course Status Styles */
   .wd-course-status {
     background: white;
     padding: 20px;
@@ -312,7 +308,6 @@ body   {
     border-color: #d9dce0;
   }
 
-  /* Collapse All and View Progress button styles */
   .wd-collapse-btn, .wd-progress-btn {
     background-color: #d9dce0 !important;
     border-color: #d9dce0 !important;
@@ -325,7 +320,6 @@ body   {
     color: #000 !important;
   }
 
-  /* Assignments Page Styles */
   #wd-assignments .wd-assignment-section {
     margin-bottom: 2rem;
   }

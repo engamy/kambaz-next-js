@@ -5,7 +5,6 @@ export default function CourseStatus() {
       <div id="wd-course-status" className="wd-course-status">
         <h2 className="wd-course-status-title">Course Status</h2>
         
-        {/* Main action buttons */}
         <div className="wd-main-buttons">
           <button className="btn btn-secondary wd-unpublish-btn">
             <FaBan className="me-2" />
@@ -17,7 +16,6 @@ export default function CourseStatus() {
           </button>
         </div>
 
-        {/* Action buttons list */}
         <div className="wd-action-buttons">
           <button className="btn btn-outline-secondary wd-action-btn">
             <FaDownload className="me-2" />

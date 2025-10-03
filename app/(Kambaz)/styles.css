@@ -1,0 +1,393 @@
+body   {
+    margin: 0;
+    padding: 0;
+  }
+  
+  body * {
+    font-family: Arial,
+    Helvetica, sans-serif;
+  }
+  
+  @media (min-width: 768px) {
+    #wd-kambaz .wd-main-content-offset {
+      padding-left: 140px !important;
+    }
+  }
+  
+  .list-group.wd > .list-group-item.active {
+    color: black;
+    background-color: white;
+    border-left: 3px solid black !important;
+  }
+  
+  .wd-modules .list-group-item {
+    border-left: 0;
+    border-right: 0;
+  }
+  .wd-modules .list-group-item:first-child {
+    border-top: 0;
+  }
+  .wd-modules .list-group-item:last-child {
+    border-bottom: 0;
+  }
+  .wd-modules .list-group > .list-group-item > .list-group {
+    border-left: 0;
+  }
+  .wd-module-container {
+    border-left: 4px solid #198754;
+    margin-bottom: 36px;
+  }
+
+  .wd-modules .list-group-item {
+    padding-top: 18px;
+    padding-bottom: 18px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .wd-modules .list-group-item.p-0 > .bg-body-tertiary {
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    background-color: #d9dce0 !important;
+  }
+  .wd-row-actions {
+    min-width: 48px;
+    justify-content: flex-end;
+  }
+  .wd-dots {
+    width: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, 4px);
+    grid-auto-rows: 4px;
+    gap: 2px 4px;
+    align-content: center;
+  }
+  .wd-dots span {
+    width: 4px;
+    height: 4px;
+    background: #595959;
+    border-radius: 50%;
+    display: block;
+  }
+  
+  .wd-overlay-course {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    display: flex;
+    justify-content: center;
+  }
+  .wd-drawer {
+    width: 280px;
+    max-width: 85vw;
+    background: #fff;
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    padding: 12px;
+  }
+  .wd-drawer-course {
+    width: 100%;
+    background: #fff;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 12px;
+    border-radius: 0 0 8px 8px;
+    position: relative;
+  }
+  .wd-course-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #6c757d;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1070;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .wd-overlay-full {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1050;
+    display: flex;
+  }
+  .wd-drawer-full {
+    width: 100vw;
+    background: #fff;
+    height: 100%;
+    overflow-y: auto;
+    padding: 16px;
+    z-index: 1060;
+  }
+  .wd-drawer-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #dc3545;
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1070;
+    pointer-events: auto;
+  }
+  /* Mobile navigation styling - only show on small screens */
+  @media (max-width: 767px) {
+    .wd-mobile-nav {
+      display: flex;
+      flex-direction: column;
+      padding-top: 60px;
+      gap: 8px;
+    }
+    .wd-mobile-nav-item {
+      text-align: left;
+    }
+    .wd-mobile-nav-link {
+      text-decoration: none;
+      color: #000;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 12px 20px;
+      border-radius: 8px;
+      transition: background-color 0.2s;
+      gap: 15px;
+    }
+    .wd-mobile-nav-link:hover {
+      background-color: #f8f9fa;
+      color: #000;
+    }
+    .wd-mobile-nav-link .fs-1 {
+      font-size: 1.2rem !important;
+      min-width: 24px;
+    }
+  }
+  
+  /* Hide mobile nav on larger screens */
+  @media (min-width: 768px) {
+    .wd-mobile-nav {
+      display: none;
+    }
+    .wd-overlay-full {
+      display: none !important;
+    }
+    .wd-drawer-full {
+      display: none !important;
+    }
+  }
+  /* Dropdown menu for Publish All */
+  .wd-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    padding: 6px 0;
+    min-width: 320px;
+    z-index: 1040;
+  }
+  .wd-dropdown-menu .dropdown-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .wd-dropdown-menu .dropdown-item:hover {
+    background: #f1f3f5;
+  }
+  .wd-buttons .btn {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 18px;
+    padding-right: 18px;
+    border-radius: 10px;
+  }
+  .wd-buttons .btn.btn-secondary,
+  .wd-buttons .btn.btn-secondary:hover,
+  .wd-buttons .btn.btn-secondary:focus {
+    color: #000 !important;
+  }
+
+  /* Course Status Styles */
+  .wd-course-status {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 300px;
+  }
+
+  .wd-course-status-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 20px;
+    margin-top: 0;
+  }
+
+  .wd-main-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .wd-unpublish-btn {
+    flex: 1;
+    background-color: #d9dce0;
+    border: 1px solid #d9dce0;
+    color: #000;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wd-unpublish-btn:hover {
+    background-color: #d9dce0;
+    color: #000;
+  }
+
+  .wd-publish-btn {
+    flex: 1;
+    background-color: #198754;
+    border: 1px solid #198754;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wd-publish-btn:hover {
+    background-color: #157347;
+    border-color: #146c43;
+    color: white;
+  }
+
+  .wd-action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .wd-action-btn {
+    width: 100%;
+    background-color: #d9dce0;
+    border: 1px solid #d9dce0;
+    color: #000;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .wd-action-btn:hover {
+    background-color: #d9dce0;
+    color: #000;
+    border-color: #d9dce0;
+  }
+
+  /* Collapse All and View Progress button styles */
+  .wd-collapse-btn, .wd-progress-btn {
+    background-color: #d9dce0 !important;
+    border-color: #d9dce0 !important;
+    color: #000 !important;
+  }
+
+  .wd-collapse-btn:hover, .wd-progress-btn:hover {
+    background-color: #d9dce0 !important;
+    border-color: #d9dce0 !important;
+    color: #000 !important;
+  }
+
+  /* Assignments Page Styles */
+  #wd-assignments .wd-assignment-section {
+    margin-bottom: 2rem;
+  }
+
+  #wd-assignments .wd-assignment-list {
+    border-left: 4px solid #198754 !important;
+    background: white;
+  }
+
+  #wd-assignments .wd-assignment-item {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  #wd-assignments .wd-assignment-item:last-child {
+    border-bottom: none;
+  }
+
+  #wd-assignments .wd-assignment-link {
+    font-weight: bold;
+    color: #000;
+    text-decoration: none;
+  }
+
+  #wd-assignments .wd-assignment-link:hover {
+    color: #000;
+    text-decoration: none;
+  }
+
+  #wd-assignments .wd-assignment-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #wd-assignments .form-control {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  }
+
+  #wd-assignments .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  #wd-assignments .btn-light {
+    background-color: #fff;
+    border-color: #dee2e6;
+    color: #000;
+  }
+
+  #wd-assignments .btn-light:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #000;
+  }
+
+  #wd-assignments .badge {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function Float() {
   return (
     <div>
@@ -13,9 +15,12 @@ export default function Float() {
           <div className="wd-float-left wd-dimension-portrait
                           wd-bg-color-red">
             Red </div>
-          <img className="wd-float-right"
+          <Image className="wd-float-right"
             src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg"
-            alt="Starship rocket"/>
+            alt="Starship rocket"
+            width={300}
+            height={200}
+          />
           <div className="wd-float-done"></div>
         </div>
       </div>

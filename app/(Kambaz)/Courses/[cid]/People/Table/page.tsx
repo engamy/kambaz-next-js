@@ -20,7 +20,7 @@ export default function PeopleTable() {
             .filter((usr) =>
               enrollments.some((enrollment) => enrollment.user === usr._id && enrollment.course === cid)
             )
-            .map((user: any) => (
+            .map((user: { _id: string; firstName: string; lastName: string; loginId: string; section: string; role: string; lastActivity: string; totalActivity: string }) => (
               <tr key={user._id}>
                 <td className="wd-full-name text-nowrap">
                   <FaUserCircle className="me-2 fs-1 text-secondary" />

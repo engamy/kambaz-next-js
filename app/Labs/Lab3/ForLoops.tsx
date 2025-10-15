@@ -1,5 +1,6 @@
 export default function ForLoops() {
     const stringArray1 = ["string1", "string3"];
+    // eslint-disable-next-line prefer-const
     let stringArray2 = [];
     for (let i = 0; i < stringArray1.length; i++) {
       const string1 = stringArray1[i];

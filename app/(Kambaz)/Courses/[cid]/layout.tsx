@@ -3,7 +3,6 @@ import { FaAlignJustify } from "react-icons/fa6";
 import { courses } from "../../Database";
 import CourseNavigation from "./Navigation";
 import Breadcrumb from "./Breadcrumb";
-import Link from "next/link";
 
 export default async function CoursesLayout(
   { children, params }:

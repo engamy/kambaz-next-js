@@ -1,6 +1,5 @@
 import { Col } from "react-bootstrap";
 import { Row } from "react-bootstrap";
-import BootstrapExamples from "./BootstrapExamples";
 
 export default function BootstrapGrids() {
   return (

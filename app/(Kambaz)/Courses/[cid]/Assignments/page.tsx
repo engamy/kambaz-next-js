@@ -1,8 +1,66 @@
 "use client";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { FaEllipsisV, FaPlus, FaSearch, FaCheckCircle, FaFileAlt, FaChevronDown } from "react-icons/fa";
+import assignments from "@/app/(Kambaz)/Database/assignments.json";
+
+interface Assignment {
+    _id: string;
+    title: string;
+    name: string;
+    course: string;
+    description: string;
+    points: number;
+    assignmentGroup: string;
+    displayGradeAs: string;
+    submissionType: string;
+    onlineEntryOptions: {
+        textEntry: boolean;
+        websiteUrl: boolean;
+        mediaRecordings: boolean;
+        studentAnnotation: boolean;
+        fileUploads: boolean;
+    };
+    dueDate: string;
+    dueTime: string;
+    availableFromDate: string;
+    availableFromTime: string;
+    untilDate: string;
+    untilTime: string;
+}
 
 export default function Assignments() {
+    const params = useParams();
+    const courseId = params.cid as string;
+    
+    // Filter assignments for the current course
+    const courseAssignments = assignments.filter((assignment: Assignment) => assignment.course === courseId);
+    
+    // Group assignments by assignment group
+    const groupedAssignments = courseAssignments.reduce((groups: Record<string, Assignment[]>, assignment: Assignment) => {
+        const group = assignment.assignmentGroup;
+        if (!groups[group]) {
+            groups[group] = [];
+        }
+        groups[group].push(assignment);
+        return groups;
+    }, {} as Record<string, Assignment[]>);
+
+    const formatDate = (dateStr: string) => {
+        if (!dateStr) return "";
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    };
+
+    const formatTime = (timeStr: string) => {
+        if (!timeStr) return "";
+        const [hours, minutes] = timeStr.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const displayHour = hour % 12 || 12;
+        return `${displayHour}:${minutes}${ampm}`;
+    };
+
     return (
       <div id="wd-assignments" className="p-4">
         <div className="d-flex align-items-center gap-3 mb-4">
@@ -26,145 +84,62 @@ export default function Assignments() {
           </div>
         </div>
 
-        <div className="wd-assignment-section mb-4">
-          <div className="d-flex align-items-center justify-content-between mb-3">
-            <div className="d-flex align-items-center gap-2">
-              <FaEllipsisV className="text-secondary" />
-              <FaChevronDown className="text-secondary" />
-              <h3 className="mb-0 fw-bold text-uppercase">ASSIGNMENTS</h3>
-            </div>
-            <div className="d-flex align-items-center gap-2">
-              <span className="badge bg-light text-dark px-3 py-2 rounded-pill">40% of Total</span>
-              <FaPlus className="text-secondary" />
-              <FaEllipsisV className="text-secondary" />
-            </div>
-          </div>
-          
-          <div className="wd-assignment-list border rounded-1" style={{ borderLeft: '4px solid #198754' }}>
-            <div className="wd-assignment-item border-bottom p-3">
-              <div className="d-flex align-items-start">
-                <FaEllipsisV className="text-secondary me-3 mt-1" />
-                <div className="flex-fill">
-                  <div className="d-flex align-items-center mb-2">
-                    <div className="wd-assignment-icon me-3">
-                      <FaFileAlt className="text-success" style={{ fontSize: '18px' }} />
-                    </div>
-                    <Link href="/Courses/1234/Assignments/001" className="wd-assignment-link fw-bold text-decoration-none text-dark">
-                      A1
-                    </Link>
-                  </div>
-                  <div className="ms-5">
-                    <div className="text-danger mb-1">Multiple Modules</div>
-                    <div className="text-muted small">
-                      <strong>Not available until</strong> May 6 at 12:00am | <strong>Due</strong> May 13 at 11:59pm | 100 pts
-                    </div>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center gap-2">
-                  <FaCheckCircle className="text-success" />
-                  <FaEllipsisV className="text-secondary" />
-                </div>
+        {Object.entries(groupedAssignments).map(([groupName, groupAssignments]) => (
+          <div key={groupName} className="wd-assignment-section mb-4">
+            <div className="d-flex align-items-center justify-content-between mb-3">
+              <div className="d-flex align-items-center gap-2">
+                <FaEllipsisV className="text-secondary" />
+                <FaChevronDown className="text-secondary" />
+                <h3 className="mb-0 fw-bold text-uppercase">{groupName}</h3>
+              </div>
+              <div className="d-flex align-items-center gap-2">
+                <span className="badge bg-light text-dark px-3 py-2 rounded-pill">
+                  {groupName === 'ASSIGNMENTS' ? '40% of Total' : 
+                   groupName === 'QUIZZES' ? '10% of Total' :
+                   groupName === 'EXAMS' ? '15% of Total' :
+                   groupName === 'PROJECTS' ? '15% of Total' : '20% of Total'}
+                </span>
+                <FaPlus className="text-secondary" />
+                <FaEllipsisV className="text-secondary" />
               </div>
             </div>
-
-            <div className="wd-assignment-item border-bottom p-3">
-              <div className="d-flex align-items-start">
-                <FaEllipsisV className="text-secondary me-3 mt-1" />
-                <div className="flex-fill">
-                  <div className="d-flex align-items-center mb-2">
-                    <div className="wd-assignment-icon me-3">
-                      <FaFileAlt className="text-success" style={{ fontSize: '18px' }} />
+            
+            <div className="wd-assignment-list border rounded-1" style={{ borderLeft: '4px solid #198754' }}>
+              {(groupAssignments as Assignment[]).map((assignment: Assignment, index: number) => (
+                <div key={assignment._id} className={`wd-assignment-item ${index < (groupAssignments as Assignment[]).length - 1 ? 'border-bottom' : ''} p-3`}>
+                  <div className="d-flex align-items-start">
+                    <FaEllipsisV className="text-secondary me-3 mt-1" />
+                    <div className="flex-fill">
+                      <div className="d-flex align-items-center mb-2">
+                        <div className="wd-assignment-icon me-3">
+                          <FaFileAlt className="text-success" style={{ fontSize: '18px' }} />
+                        </div>
+                        <Link 
+                          href={`/Courses/${courseId}/Assignments/${assignment._id}`} 
+                          className="wd-assignment-link fw-bold text-decoration-none text-dark"
+                        >
+                          {assignment.title}
+                        </Link>
+                      </div>
+                      <div className="ms-5">
+                        <div className="text-danger mb-1">{assignment.name}</div>
+                        <div className="text-muted small">
+                          <strong>Not available until</strong> {formatDate(assignment.availableFromDate)} at {formatTime(assignment.availableFromTime)} | 
+                          <strong> Due</strong> {formatDate(assignment.dueDate)} at {formatTime(assignment.dueTime)} | 
+                          {assignment.points} pts
+                        </div>
+                      </div>
                     </div>
-                    <Link href="/Courses/1234/Assignments/002" className="wd-assignment-link fw-bold text-decoration-none text-dark">
-                      A2
-                    </Link>
-                  </div>
-                  <div className="ms-5">
-                    <div className="text-danger mb-1">Multiple Modules</div>
-                    <div className="text-muted small">
-                      <strong>Not available until</strong> May 13 at 12:00am | <strong>Due</strong> May 20 at 11:59pm | 100 pts
-                    </div>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center gap-2">
-                  <FaCheckCircle className="text-success" />
-                  <FaEllipsisV className="text-secondary" />
-                </div>
-              </div>
-            </div>
-
-            <div className="wd-assignment-item p-3">
-              <div className="d-flex align-items-start">
-                <FaEllipsisV className="text-secondary me-3 mt-1" />
-                <div className="flex-fill">
-                  <div className="d-flex align-items-center mb-2">
-                    <div className="wd-assignment-icon me-3">
-                      <FaFileAlt className="text-success" style={{ fontSize: '18px' }} />
-                    </div>
-                    <Link href="/Courses/1234/Assignments/003" className="wd-assignment-link fw-bold text-decoration-none text-dark">
-                      A3
-                    </Link>
-                  </div>
-                  <div className="ms-5">
-                    <div className="text-danger mb-1">Multiple Modules</div>
-                    <div className="text-muted small">
-                      <strong>Not available until</strong> May 20 at 12:00am | <strong>Due</strong> May 27 at 11:59pm | 100 pts
+                    <div className="d-flex align-items-center gap-2">
+                      <FaCheckCircle className="text-success" />
+                      <FaEllipsisV className="text-secondary" />
                     </div>
                   </div>
                 </div>
-                <div className="d-flex align-items-center gap-2">
-                  <FaCheckCircle className="text-success" />
-                  <FaEllipsisV className="text-secondary" />
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-        </div>
-
-        <div className="wd-assignment-section mb-4">
-          <div className="d-flex align-items-center justify-content-between mb-3">
-            <div className="d-flex align-items-center gap-2">
-              <FaEllipsisV className="text-secondary" />
-              <FaChevronDown className="text-secondary" />
-              <h3 className="mb-0 fw-bold text-uppercase">QUIZZES</h3>
-            </div>
-            <div className="d-flex align-items-center gap-2">
-              <span className="badge bg-light text-dark px-3 py-2 rounded-pill">10% of Total</span>
-              <FaPlus className="text-secondary" />
-              <FaEllipsisV className="text-secondary" />
-            </div>
-          </div>
-        </div>
-
-        <div className="wd-assignment-section mb-4">
-          <div className="d-flex align-items-center justify-content-between mb-3">
-            <div className="d-flex align-items-center gap-2">
-              <FaEllipsisV className="text-secondary" />
-              <FaChevronDown className="text-secondary" />
-              <h3 className="mb-0 fw-bold text-uppercase">EXAMS</h3>
-            </div>
-            <div className="d-flex align-items-center gap-2">
-              <span className="badge bg-light text-dark px-3 py-2 rounded-pill">15% of Total</span>
-              <FaPlus className="text-secondary" />
-              <FaEllipsisV className="text-secondary" />
-            </div>
-          </div>
-        </div>
-
-        <div className="wd-assignment-section mb-4">
-          <div className="d-flex align-items-center justify-content-between mb-3">
-            <div className="d-flex align-items-center gap-2">
-              <FaEllipsisV className="text-secondary" />
-              <FaChevronDown className="text-secondary" />
-              <h3 className="mb-0 fw-bold text-uppercase">PROJECTS</h3>
-            </div>
-            <div className="d-flex align-items-center gap-2">
-              <span className="badge bg-light text-dark px-3 py-2 rounded-pill">15% of Total</span>
-              <FaPlus className="text-secondary" />
-              <FaEllipsisV className="text-secondary" />
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
   );
 }

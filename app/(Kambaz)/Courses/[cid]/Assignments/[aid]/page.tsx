@@ -1,17 +1,64 @@
 'use client';
 
 import { Button, Row, Col, Container } from 'react-bootstrap';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import assignments from '@/app/(Kambaz)/Database/assignments.json';
+
+interface Assignment {
+    _id: string;
+    title: string;
+    name: string;
+    course: string;
+    description: string;
+    points: number;
+    assignmentGroup: string;
+    displayGradeAs: string;
+    submissionType: string;
+    onlineEntryOptions: {
+        textEntry: boolean;
+        websiteUrl: boolean;
+        mediaRecordings: boolean;
+        studentAnnotation: boolean;
+        fileUploads: boolean;
+    };
+    dueDate: string;
+    dueTime: string;
+    availableFromDate: string;
+    availableFromTime: string;
+    untilDate: string;
+    untilTime: string;
+}
 
 export default function AssignmentEditor() {
+    const params = useParams();
+    const assignmentId = params.aid as string;
+    const courseId = params.cid as string;
+    
+    // Find the assignment by ID
+    const assignment = assignments.find((a: Assignment) => a._id === assignmentId);
+    
+    // If assignment not found, show a message
+    if (!assignment) {
+        return (
+            <Container className="mt-4">
+                <div className="alert alert-warning">
+                    Assignment not found.
+                </div>
+            </Container>
+        );
+    }
+
     return (
       <Container className="mt-4">
         <div id="wd-assignments-editor" className="mr-5">
+          <h2 className="mb-4">{assignment.name}</h2>
           <form>
             <div className="mb-3">
               <label htmlFor="wd-name" className="form-label">Assignment Name</label>
               <input 
                 id="wd-name" 
-                defaultValue="A1" 
+                defaultValue={assignment.title} 
                 className="form-control border-secondary"
                 type="text"
               />
@@ -23,17 +70,7 @@ export default function AssignmentEditor() {
                 id="wd-description"
                 className="form-control border-secondary"
                 rows={8}
-                defaultValue={`The assignment is available online
-
-Submit a link to the landing page of your Web application running on Netlify.
-
-The landing page should include the following:
-• Your full name and section
-• Links to each of the lab assignments
-• Link to the Kambas application
-• Links to all relevant source code repositories
-
-The Kambas application should include a link to navigate back to the landing page.`}
+                defaultValue={assignment.description}
               />
             </div>
 
@@ -44,7 +81,7 @@ The Kambas application should include a link to navigate back to the landing pag
               <Col md={2}>
                 <input 
                   id="wd-points" 
-                  defaultValue={100} 
+                  defaultValue={assignment.points} 
                   type="number" 
                   className="form-control text-end border-secondary"
                 />
@@ -53,15 +90,17 @@ The Kambas application should include a link to navigate back to the landing pag
 
             <div className="mb-3">
               <label htmlFor="wd-assignment-group" className="form-label">Assignment Group</label>
-              <select id="wd-assignment-group" className="form-select border-secondary">
+              <select id="wd-assignment-group" className="form-select border-secondary" defaultValue={assignment.assignmentGroup}>
                 <option value="ASSIGNMENTS">ASSIGNMENTS</option>
                 <option value="QUIZZES">QUIZZES</option>
+                <option value="EXAMS">EXAMS</option>
+                <option value="PROJECTS">PROJECTS</option>
               </select>
             </div>
 
             <div className="mb-3">
               <label htmlFor="wd-select-grade-display" className="form-label">Display Grade as</label>
-              <select id="wd-select-grade-display" className="form-select border-secondary">
+              <select id="wd-select-grade-display" className="form-select border-secondary" defaultValue={assignment.displayGradeAs}>
                 <option value="Percentage">Percentage</option>
                 <option value="Letter">Letter</option>
               </select>
@@ -69,7 +108,7 @@ The Kambas application should include a link to navigate back to the landing pag
 
             <div className="mb-3">
               <label htmlFor="wd-submission-type" className="form-label">Submission Type</label>
-              <select id="wd-submission-type" className="form-select border-secondary">
+              <select id="wd-submission-type" className="form-select border-secondary" defaultValue={assignment.submissionType}>
                 <option value="Online">Online</option>
                 <option value="In-Person">In-Person</option>
               </select>
@@ -83,6 +122,7 @@ The Kambas application should include a link to navigate back to the landing pag
                     type="checkbox" 
                     id="wd-text-entry" 
                     className="form-check-input border-secondary"
+                    defaultChecked={assignment.onlineEntryOptions.textEntry}
                   />
                   <label htmlFor="wd-text-entry" className="form-check-label">Text Entry</label>
                 </div>
@@ -93,7 +133,7 @@ The Kambas application should include a link to navigate back to the landing pag
                     type="checkbox" 
                     id="wd-website-url" 
                     className="form-check-input border-secondary"
-                    defaultChecked
+                    defaultChecked={assignment.onlineEntryOptions.websiteUrl}
                   />
                   <label htmlFor="wd-website-url" className="form-check-label">Website URL</label>
                 </div>
@@ -104,6 +144,7 @@ The Kambas application should include a link to navigate back to the landing pag
                     type="checkbox" 
                     id="wd-media-recordings" 
                     className="form-check-input border-secondary"
+                    defaultChecked={assignment.onlineEntryOptions.mediaRecordings}
                   />
                   <label htmlFor="wd-media-recordings" className="form-check-label">Media Recordings</label>
                 </div>
@@ -114,6 +155,7 @@ The Kambas application should include a link to navigate back to the landing pag
                     type="checkbox" 
                     id="wd-student-annotation" 
                     className="form-check-input border-secondary"
+                    defaultChecked={assignment.onlineEntryOptions.studentAnnotation}
                   />
                   <label htmlFor="wd-student-annotation" className="form-check-label">Student Annotation</label>
                 </div>
@@ -124,6 +166,7 @@ The Kambas application should include a link to navigate back to the landing pag
                     type="checkbox" 
                     id="wd-file-uploads" 
                     className="form-check-input border-secondary"
+                    defaultChecked={assignment.onlineEntryOptions.fileUploads}
                   />
                   <label htmlFor="wd-file-uploads" className="form-check-label">File Uploads</label>
                 </div>
@@ -147,7 +190,7 @@ The Kambas application should include a link to navigate back to the landing pag
               <Col md={4}>
                 <input 
                   id="wd-due-date" 
-                  defaultValue="2024-05-13" 
+                  defaultValue={assignment.dueDate} 
                   type="date" 
                   className="form-control border-secondary"
                 />
@@ -155,7 +198,7 @@ The Kambas application should include a link to navigate back to the landing pag
               <Col md={2}>
                 <input 
                   id="wd-due-time" 
-                  defaultValue="23:59" 
+                  defaultValue={assignment.dueTime} 
                   type="time" 
                   className="form-control border-secondary"
                 />
@@ -169,7 +212,7 @@ The Kambas application should include a link to navigate back to the landing pag
               <Col md={4}>
                 <input 
                   id="wd-available-from-date" 
-                  defaultValue="2024-05-06" 
+                  defaultValue={assignment.availableFromDate} 
                   type="date" 
                   className="form-control border-secondary"
                 />
@@ -177,7 +220,7 @@ The Kambas application should include a link to navigate back to the landing pag
               <Col md={2}>
                 <input 
                   id="wd-available-from-time" 
-                  defaultValue="00:01" 
+                  defaultValue={assignment.availableFromTime} 
                   type="time" 
                   className="form-control border-secondary"
                 />
@@ -191,6 +234,7 @@ The Kambas application should include a link to navigate back to the landing pag
               <Col md={4}>
                 <input 
                   id="wd-until-date" 
+                  defaultValue={assignment.untilDate || ""} 
                   type="date" 
                   className="form-control border-secondary"
                 />
@@ -198,6 +242,7 @@ The Kambas application should include a link to navigate back to the landing pag
               <Col md={2}>
                 <input 
                   id="wd-until-time" 
+                  defaultValue={assignment.untilTime || ""} 
                   type="time" 
                   className="form-control border-secondary"
                 />
@@ -205,12 +250,16 @@ The Kambas application should include a link to navigate back to the landing pag
             </Row>
 
             <div className="d-flex justify-content-end gap-2">
-              <Button variant="outline-secondary" className="px-4">
-                Cancel
-              </Button>
-              <Button variant="danger" className="px-4">
-                Save
-              </Button>
+              <Link href={`/Courses/${courseId}/Assignments`}>
+                <Button variant="outline-secondary" className="px-4">
+                  Cancel
+                </Button>
+              </Link>
+              <Link href={`/Courses/${courseId}/Assignments`}>
+                <Button variant="danger" className="px-4">
+                  Save
+                </Button>
+              </Link>
             </div>
           </form>
         </div>

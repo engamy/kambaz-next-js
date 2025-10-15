@@ -5,7 +5,7 @@ export default function Labs() {
 
 
     <h1>Amy Eng | Section 01</h1>
-        <a href="https://github.com/engamy/kambaz-next-js" target="_blank">
+        <a href="https://github.com/engamy/kambaz-next-js" target="_blank" id="wd-github">
         <p>Github repository link</p>
         </a>
         

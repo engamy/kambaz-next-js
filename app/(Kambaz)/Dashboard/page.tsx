@@ -1,34 +1,32 @@
 "use client"
 import Link from "next/link";
-import * as db from "../Database";
 import { Row, Col, Card, CardImg, CardBody, CardTitle, CardText, Button, FormControl } from "react-bootstrap";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewCourse, deleteCourse, updateCourse } from "../Courses/reducer";
 import { RootState } from "../store";
 
+interface Course {
+  _id: string;
+  name: string;
+  number: string;
+  startDate: string;
+  endDate: string;
+  image?: string;
+  description: string;
+  department?: string;
+  credits?: number;
+}
 
 export default function Dashboard() {
   const { courses } = useSelector((state: RootState) => state.coursesReducer);
   const dispatch = useDispatch();
 
-  const [course, setCourse] = useState<any>({
+  const [course, setCourse] = useState<Course>({
     _id: "0", name: "New Course", number: "New Number",
     startDate: "2023-09-10", endDate: "2023-12-15",
     image: "/images/reactjs.jpg", description: "New Description"
   });
-
-  const addNewCourseHandler = (course: any) => { 
-    dispatch(addNewCourse(course));
-  };
-
-  const deleteCourseHandler = (courseId: string) => { 
-    dispatch(deleteCourse(courseId));
-  };
-
-  const updateCourseHandler = () => {
-    dispatch(updateCourse(course));
-  };
 
   
 

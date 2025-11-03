@@ -7,13 +7,32 @@ import { useState } from "react";
 import * as db from "../../Database";
 import { FormControl, Button } from "react-bootstrap";
 
+interface Credentials {
+  username?: string;
+  password?: string;
+}
+
+interface User {
+  _id: string;
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  dob: string;
+  role: string;
+  loginId: string;
+  section: string;
+  lastActivity: string;
+  totalActivity: string;
+}
 
 export default function Signin() {
-  const [credentials, setCredentials] = useState<any>({});
+  const [credentials, setCredentials] = useState<Credentials>({});
   const dispatch = useDispatch();
   const signin = () => {
     const user = db.users.find(
-      (u: any) =>
+      (u: User) =>
         u.username === credentials.username &&
         u.password === credentials.password
     );

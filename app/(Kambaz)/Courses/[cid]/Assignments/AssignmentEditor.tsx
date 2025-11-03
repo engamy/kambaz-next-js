@@ -7,6 +7,32 @@ import { useDispatch, useSelector } from "react-redux";
 import { addAssignment, updateAssignment } from "./reducer";
 import { RootState } from "../../../store";
 
+interface Assignment {
+  _id: string;
+  title: string;
+  name: string;
+  course: string;
+  description: string;
+  points: number;
+  assignmentGroup: string;
+  displayGradeAs: string;
+  submissionType: string;
+  onlineEntryOptions: {
+    textEntry: boolean;
+    websiteUrl: boolean;
+    mediaRecordings: boolean;
+    studentAnnotation: boolean;
+    fileUploads: boolean;
+  };
+  dueDate: string;
+  dueTime: string;
+  availableFromDate: string;
+  availableFromTime: string;
+  untilDate: string;
+  untilTime: string;
+  editing?: boolean;
+}
+
 export default function AssignmentEditor() {
   const params = useParams();
   const router = useRouter();
@@ -18,7 +44,7 @@ export default function AssignmentEditor() {
   // Check if we're editing or creating
   const isEditing = !!assignmentId;
   const assignment = isEditing 
-    ? assignments.find((a: any) => a._id === assignmentId)
+    ? assignments.find((a: Assignment) => a._id === assignmentId)
     : null;
 
   const [name, setName] = useState("");
@@ -71,10 +97,10 @@ export default function AssignmentEditor() {
     } else {
       // Create new assignment
       // Get existing assignments from Redux to calculate next assignment number
-      const existingAssignments = assignments.filter((a: any) => a.course === courseId);
+      const existingAssignments = assignments.filter((a: Assignment) => a.course === courseId);
       const assignmentNumbers = existingAssignments
-        .filter((a: any) => a.title?.startsWith("A"))
-        .map((a: any) => {
+        .filter((a: Assignment) => a.title?.startsWith("A"))
+        .map((a: Assignment) => {
           const match = a.title?.match(/A(\d+)/);
           return match ? parseInt(match[1]) : 0;
         });

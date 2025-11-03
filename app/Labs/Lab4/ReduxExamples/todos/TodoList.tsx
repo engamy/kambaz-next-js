@@ -5,6 +5,11 @@ import { RootState } from "../../store";
 import { ListGroup } from "react-bootstrap";
 import { deleteTodo, setTodo } from "./todosReducer";
 
+interface Todo {
+  id: string;
+  title: string;
+}
+
 export default function TodoList() {
   const { todos } = useSelector((state: RootState) => state.todosReducer);
   const dispatch = useDispatch();
@@ -13,7 +18,7 @@ export default function TodoList() {
       <h2>Todo List</h2>
       <ListGroup>
         <TodoForm />
-        {todos.map((todo: any) => (
+        {todos.map((todo: Todo) => (
           <TodoItem 
             key={todo.id} 
             todo={todo} 

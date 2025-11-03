@@ -1,0 +1,270 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Button, Row, Col, Container } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { addAssignment, updateAssignment } from "./reducer";
+import { RootState } from "../../../store";
+
+export default function AssignmentEditor() {
+  const params = useParams();
+  const router = useRouter();
+  const courseId = params.cid as string;
+  const assignmentId = params.aid as string | undefined;
+  const dispatch = useDispatch();
+  const { assignments } = useSelector((state: RootState) => state.assignmentsReducer);
+
+  // Check if we're editing or creating
+  const isEditing = !!assignmentId;
+  const assignment = isEditing 
+    ? assignments.find((a: any) => a._id === assignmentId)
+    : null;
+
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [points, setPoints] = useState(100);
+  const [dueDate, setDueDate] = useState("");
+  const [dueTime, setDueTime] = useState("23:59");
+  const [availableFromDate, setAvailableFromDate] = useState("");
+  const [availableFromTime, setAvailableFromTime] = useState("00:01");
+  const [untilDate, setUntilDate] = useState("");
+  const [untilTime, setUntilTime] = useState("");
+
+  // Load assignment data when editing
+  useEffect(() => {
+    if (assignment) {
+      setName(assignment.name || "");
+      setDescription(assignment.description || "");
+      setPoints(assignment.points || 100);
+      setDueDate(assignment.dueDate || "");
+      setDueTime(assignment.dueTime || "23:59");
+      setAvailableFromDate(assignment.availableFromDate || "");
+      setAvailableFromTime(assignment.availableFromTime || "00:01");
+      setUntilDate(assignment.untilDate || "");
+      setUntilTime(assignment.untilTime || "");
+    }
+  }, [assignment]);
+
+  const handleSave = () => {
+    if (!name.trim()) {
+      alert("Please enter an assignment name");
+      return;
+    }
+
+    if (isEditing && assignment) {
+      // Update existing assignment
+      dispatch(
+        updateAssignment({
+          ...assignment,
+          name,
+          description,
+          points,
+          dueDate,
+          dueTime,
+          availableFromDate,
+          availableFromTime,
+          untilDate,
+          untilTime,
+        })
+      );
+    } else {
+      // Create new assignment
+      // Get existing assignments from Redux to calculate next assignment number
+      const existingAssignments = assignments.filter((a: any) => a.course === courseId);
+      const assignmentNumbers = existingAssignments
+        .filter((a: any) => a.title?.startsWith("A"))
+        .map((a: any) => {
+          const match = a.title?.match(/A(\d+)/);
+          return match ? parseInt(match[1]) : 0;
+        });
+      const nextNumber = assignmentNumbers.length > 0 ? Math.max(...assignmentNumbers) + 1 : 1;
+      const title = `A${nextNumber}`;
+
+      dispatch(
+        addAssignment({
+          title,
+          name,
+          course: courseId,
+          description,
+          points,
+          assignmentGroup: "ASSIGNMENTS",
+          displayGradeAs: "Percentage",
+          submissionType: "Online",
+          onlineEntryOptions: {
+            textEntry: false,
+            websiteUrl: true,
+            mediaRecordings: false,
+            studentAnnotation: false,
+            fileUploads: false,
+          },
+          dueDate,
+          dueTime,
+          availableFromDate,
+          availableFromTime,
+          untilDate,
+          untilTime,
+        })
+      );
+    }
+
+    router.push(`/Courses/${courseId}/Assignments`);
+  };
+
+  const handleCancel = () => {
+    router.push(`/Courses/${courseId}/Assignments`);
+  };
+
+  // Show loading/error state if editing but assignment not found
+  if (isEditing && !assignment) {
+    return (
+      <Container className="mt-4">
+        <div className="alert alert-warning">
+          Assignment not found.
+        </div>
+      </Container>
+    );
+  }
+
+  return (
+    <Container className="mt-4">
+      <div id="wd-assignments-editor" className="mr-5">
+        <h2 className="mb-4">{isEditing ? assignment?.name || "Edit Assignment" : "New Assignment"}</h2>
+        <form>
+          <div className="mb-3">
+            <label htmlFor="wd-name" className="form-label">
+              Assignment Name
+            </label>
+            <input
+              id="wd-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="form-control border-secondary"
+              type="text"
+              placeholder="Enter assignment name"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="wd-description" className="form-label">
+              Assignment Description
+            </label>
+            <textarea
+              id="wd-description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="form-control border-secondary"
+              rows={8}
+              placeholder="Enter assignment description"
+            />
+          </div>
+
+          <Row className="mb-3">
+            <Col md={2} className="text-end">
+              <label htmlFor="wd-points" className="form-label">
+                Points
+              </label>
+            </Col>
+            <Col md={2}>
+              <input
+                id="wd-points"
+                value={points}
+                onChange={(e) => setPoints(parseInt(e.target.value) || 0)}
+                type="number"
+                className="form-control text-end border-secondary"
+              />
+            </Col>
+          </Row>
+
+          <Row className="mb-3">
+            <Col md={2}>
+              <label htmlFor="wd-due-date" className="form-label">
+                Due
+              </label>
+            </Col>
+            <Col md={4}>
+              <input
+                id="wd-due-date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                type="date"
+                className="form-control border-secondary"
+              />
+            </Col>
+            <Col md={2}>
+              <input
+                id="wd-due-time"
+                value={dueTime}
+                onChange={(e) => setDueTime(e.target.value)}
+                type="time"
+                className="form-control border-secondary"
+              />
+            </Col>
+          </Row>
+
+          <Row className="mb-3">
+            <Col md={2}>
+              <label htmlFor="wd-available-from-date" className="form-label">
+                Available from
+              </label>
+            </Col>
+            <Col md={4}>
+              <input
+                id="wd-available-from-date"
+                value={availableFromDate}
+                onChange={(e) => setAvailableFromDate(e.target.value)}
+                type="date"
+                className="form-control border-secondary"
+              />
+            </Col>
+            <Col md={2}>
+              <input
+                id="wd-available-from-time"
+                value={availableFromTime}
+                onChange={(e) => setAvailableFromTime(e.target.value)}
+                type="time"
+                className="form-control border-secondary"
+              />
+            </Col>
+          </Row>
+
+          <Row className="mb-4">
+            <Col md={2}>
+              <label htmlFor="wd-until-date" className="form-label">
+                Until
+              </label>
+            </Col>
+            <Col md={4}>
+              <input
+                id="wd-until-date"
+                value={untilDate}
+                onChange={(e) => setUntilDate(e.target.value)}
+                type="date"
+                className="form-control border-secondary"
+              />
+            </Col>
+            <Col md={2}>
+              <input
+                id="wd-until-time"
+                value={untilTime}
+                onChange={(e) => setUntilTime(e.target.value)}
+                type="time"
+                className="form-control border-secondary"
+              />
+            </Col>
+          </Row>
+
+          <div className="d-flex justify-content-end gap-2">
+            <Button variant="outline-secondary" className="px-4" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button variant="danger" className="px-4" onClick={handleSave}>
+              Save
+            </Button>
+          </div>
+        </form>
+      </div>
+    </Container>
+  );
+}
+

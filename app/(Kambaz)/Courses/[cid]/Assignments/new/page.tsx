@@ -1,5 +1,8 @@
+"use client";
+
 import AssignmentEditor from "../AssignmentEditor";
 
-export default function EditAssignmentPage() {
+export default function NewAssignmentPage() {
   return <AssignmentEditor />;
 }
+

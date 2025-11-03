@@ -12,17 +12,23 @@ export default function TOC() {
      <NavItem>
        <NavLink href="/Labs/Lab1" as={Link} active={pathname === "/Labs/Lab1"}>Lab 1</NavLink>
      </NavItem>
-     <NavItem>
-       <NavLink href="/Labs/Lab2" as={Link} active={pathname === "/Labs/Lab2"}>Lab 2</NavLink>
-     </NavItem>
-     <NavItem>
-       <NavLink href="/Labs/Lab3" as={Link} active={pathname === "/Labs/Lab3"}>Lab 3</NavLink>
-     </NavItem>
-     <NavItem>
-       <NavLink href="/" as={Link} active={pathname === "/"}>Kambaz</NavLink>
-     </NavItem>
-     <NavItem>
-       <NavLink href="https://github.com/engamy/kambaz-next-js">My GitHub</NavLink>
-     </NavItem>
+    <NavItem>
+      <NavLink href="/Labs/Lab2" as={Link} active={pathname === "/Labs/Lab2"}>Lab 2</NavLink>
+    </NavItem>
+    <NavItem>
+      <NavLink href="/Labs/Lab3" as={Link} active={pathname === "/Labs/Lab3"}>Lab 3</NavLink>
+    </NavItem>
+    <NavItem>
+      <NavLink href="/Labs/Lab4" as={Link} active={pathname === "/Labs/Lab4"}>Lab 4</NavLink>
+    </NavItem>
+    <NavItem>
+      <NavLink href="/Labs/Lab5" as={Link} active={pathname === "/Labs/Lab5"}>Lab 5</NavLink>
+    </NavItem>
+    <NavItem>
+      <NavLink href="/" as={Link} active={pathname === "/"}>Kambaz</NavLink>
+    </NavItem>
+    <NavItem>
+      <NavLink href="https://github.com/engamy/kambaz-next-js">My GitHub</NavLink>
+    </NavItem>
    </Nav>
 );}

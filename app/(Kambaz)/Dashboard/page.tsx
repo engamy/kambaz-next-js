@@ -12,10 +12,10 @@ interface Course {
   number: string;
   startDate: string;
   endDate: string;
-  image?: string;
+  department: string;
+  credits: number;
   description: string;
-  department?: string;
-  credits?: number;
+  image?: string;
 }
 
 export default function Dashboard() {
@@ -25,6 +25,7 @@ export default function Dashboard() {
   const [course, setCourse] = useState<Course>({
     _id: "0", name: "New Course", number: "New Number",
     startDate: "2023-09-10", endDate: "2023-12-15",
+    department: "", credits: 0,
     image: "/images/reactjs.jpg", description: "New Description"
   });
 

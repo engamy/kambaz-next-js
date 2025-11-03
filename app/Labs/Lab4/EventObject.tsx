@@ -9,7 +9,7 @@ interface SerializableEvent {
 export default function EventObject() {
   const [event, setEvent] = useState<SerializableEvent | null>(null);
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const eventCopy: SerializableEvent = { ...e } as SerializableEvent;
+    const eventCopy: SerializableEvent = { ...e } as unknown as SerializableEvent;
     eventCopy.target = (e.target as HTMLElement).outerHTML;
     delete eventCopy.view;
     setEvent(eventCopy);

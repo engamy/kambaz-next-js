@@ -7,8 +7,6 @@ export const axiosWithCredentials = axios.create({
   baseURL: HTTP_SERVER,
   withCredentials: true, 
 });
-console.log("HTTP_SERVER =", HTTP_SERVER);
-console.log("USERS_API =", USERS_API);
 
 export interface Credentials {
   username?: string;

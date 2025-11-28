@@ -4,9 +4,11 @@ import { Row, Col, Card, CardImg, CardBody, CardTitle, CardText, Button, FormCon
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCourses } from "../Courses/reducer";
+import { setCurrentUser } from "../Account/reducer";
 import { RootState } from "../store";
 import * as client from "../Courses/client";
 import * as enrollmentsClient from "../Enrollments/client";
+import * as accountClient from "../Account/client";
 
 
 interface Course {
@@ -87,6 +89,19 @@ export default function Dashboard() {
     
     try {
       setErrorMessage(null);
+      // Verify session is still valid before creating course
+      try {
+        await accountClient.profile();
+      } catch (profileError) {
+        const profileAxiosError = profileError as { response?: { status?: number } };
+        if (profileAxiosError.response?.status === 401) {
+          dispatch(setCurrentUser(null));
+          setErrorMessage("Your session has expired. Please sign in again.");
+          alert("Your session has expired. Please sign in again.");
+          return;
+        }
+      }
+      
       // Remove _id before creating - backend will generate a new one
       const { _id, ...courseData } = course;
       const newCourse = await client.createCourse(courseData);
@@ -105,6 +120,8 @@ export default function Dashboard() {
       
       if (axiosError.response?.status === 401) {
         message = "You are not authenticated. Please sign out and sign in again.";
+        // Clear the current user if session is invalid
+        dispatch(setCurrentUser(null));
       } else if (axiosError.message) {
         message = axiosError.message;
       }

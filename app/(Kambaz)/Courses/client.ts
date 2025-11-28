@@ -4,15 +4,8 @@ export const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER || "http://localh
 export const COURSES_API = `${HTTP_SERVER}/api/courses`;
 export const USERS_API = `${HTTP_SERVER}/api/users`;
 
-// For direct backend calls (no authentication needed)
 export const axiosWithCredentials = axios.create({
   baseURL: HTTP_SERVER,
-  withCredentials: true,
-});
-
-// For authenticated requests through Next.js API route proxy
-export const axiosApiProxy = axios.create({
-  baseURL: '', // Use relative URLs to hit Next.js API routes
   withCredentials: true,
 });
 
@@ -61,8 +54,7 @@ export const fetchAllCourses = async () => {
 
 export const findMyCourses = async () => {
   try {
-    // Use Next.js API route proxy to maintain session cookies
-    const { data } = await axiosApiProxy.get(`/api/users/current/courses`);
+    const { data } = await axiosWithCredentials.get(`/api/users/current/courses`);
     return data;
   } catch (error) {
     const axiosError = error as AxiosError;
@@ -74,8 +66,7 @@ export const findMyCourses = async () => {
 };
 
 export const createCourse = async (course: Course) => {
-  // Use Next.js API route proxy to maintain session cookies
-  const { data } = await axiosApiProxy.post(`/api/users/current/courses`, course);
+  const { data } = await axiosWithCredentials.post(`/api/users/current/courses`, course);
   return data;
 };
 

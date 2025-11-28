@@ -79,6 +79,12 @@ export default function Dashboard() {
   };
 
   const onAddNewCourse = async () => {
+    if (!currentUser) {
+      setErrorMessage("You must be signed in to create a course.");
+      alert("You must be signed in to create a course.");
+      return;
+    }
+    
     try {
       setErrorMessage(null);
       // Remove _id before creating - backend will generate a new one
@@ -94,9 +100,16 @@ export default function Dashboard() {
         image: "/images/reactjs.jpg", description: "New Description"
       });
     } catch (error) {
-      const err = error as Error;
-      console.error("Error adding course:", err);
-      const message = err.message || "Failed to add course. Please try again.";
+      const axiosError = error as { response?: { status?: number; data?: unknown }; message?: string };
+      let message = "Failed to add course. Please try again.";
+      
+      if (axiosError.response?.status === 401) {
+        message = "You are not authenticated. Please sign out and sign in again.";
+      } else if (axiosError.message) {
+        message = axiosError.message;
+      }
+      
+      console.error("Error adding course:", error);
       setErrorMessage(message);
       alert(message);
     }

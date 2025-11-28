@@ -34,9 +34,10 @@ export async function POST(
         'Content-Type': response.headers.get('Content-Type') || 'application/json',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Proxy error';
     return NextResponse.json(
-      { error: error.message || 'Proxy error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -74,9 +75,10 @@ export async function PUT(
         'Content-Type': response.headers.get('Content-Type') || 'application/json',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Proxy error';
     return NextResponse.json(
-      { error: error.message || 'Proxy error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

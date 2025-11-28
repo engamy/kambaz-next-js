@@ -33,38 +33,40 @@ export default function Dashboard() {
   const isStudent = currentUserAny?.role === "STUDENT";
   const isFaculty = currentUserAny?.role === "FACULTY";
   
-  const fetchCourses = async () => {
-    try {
-      if (isStudent) {
-        // Students see all courses
-        const allCourses = await client.fetchAllCourses();
-        dispatch(setCourses(allCourses || []));
-        
-        // Check enrollment status for each course
-        const enrollmentStatus: Record<string, boolean> = {};
-        for (const course of allCourses) {
-          try {
-            const enrollment = await enrollmentsClient.findEnrollment(course._id);
-            enrollmentStatus[course._id] = !!enrollment;
-          } catch (error) {
-            enrollmentStatus[course._id] = false;
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        if (isStudent) {
+          const allCourses = await client.fetchAllCourses();
+          dispatch(setCourses(allCourses || []));
+          
+          const enrollmentStatus: Record<string, boolean> = {};
+          for (const course of allCourses) {
+            try {
+              const enrollment = await enrollmentsClient.findEnrollment(course._id);
+              enrollmentStatus[course._id] = !!enrollment;
+            } catch {
+              enrollmentStatus[course._id] = false;
+            }
           }
+          setEnrollments(enrollmentStatus);
+        } else if (isFaculty) {
+          const myCourses = await client.findMyCourses();
+          dispatch(setCourses(myCourses || []));
+        } else {
+          const allCourses = await client.fetchAllCourses();
+          dispatch(setCourses(allCourses || []));
         }
-        setEnrollments(enrollmentStatus);
-      } else if (isFaculty) {
-        // Faculty sees their enrolled courses (courses they created)
-        const myCourses = await client.findMyCourses();
-        dispatch(setCourses(myCourses || []));
-      } else {
-        // Default: show all courses
-        const allCourses = await client.fetchAllCourses();
-        dispatch(setCourses(allCourses || []));
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+        dispatch(setCourses([]));
       }
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-      dispatch(setCourses([]));
+    };
+    
+    if (currentUser) {
+      fetchCourses();
     }
-  };
+  }, [currentUser, isStudent, isFaculty, dispatch]);
 
   const onAddNewCourse = async () => {
     const newCourse = await client.createCourse(course);
@@ -101,11 +103,6 @@ export default function Dashboard() {
     }
   };
 
-  useEffect(() => {
-    if (currentUser) {
-      fetchCourses();
-    }
-  }, [currentUser, isStudent, isFaculty]);
 
   const [course, setCourse] = useState<Course>({
     _id: "0", name: "New Course", number: "New Number",

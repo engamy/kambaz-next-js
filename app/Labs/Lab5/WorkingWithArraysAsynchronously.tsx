@@ -2,40 +2,41 @@
 
 import React, { useState, useEffect } from "react";
 import * as client from "./client";
+import type { Todo } from "./client";
 import { FormControl, ListGroup, ListGroupItem } from "react-bootstrap";
 import { FaTrash, FaTimesCircle } from "react-icons/fa";
 import { FaPlusCircle } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 
 export default function WorkingWithArraysAsynchronously() {
-  const [todos, setTodos] = useState<any[]>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const fetchTodos = async () => {
-    const todos = await client.fetchTodos();
-    setTodos(todos);
+    const fetchedTodos = await client.fetchTodos();
+    setTodos(fetchedTodos);
   };
-  const removeTodo = async (todo: any) => {
+  const removeTodo = async (todo: Todo) => {
     const updatedTodos = await client.removeTodo(todo);
     setTodos(updatedTodos);
   };
-  const deleteTodo = async (todo: any) => {
+  const deleteTodo = async (todo: Todo) => {
     await client.deleteTodo(todo);
     const newTodos = todos.filter((t) => t.id !== todo.id);
     setTodos(newTodos);
   };
   const createNewTodo = async () => {
-    const todos = await client.createNewTodo();
-    setTodos(todos);
+    const fetchedTodos = await client.createNewTodo();
+    setTodos(fetchedTodos);
   };
   const postNewTodo = async () => {
     const newTodo = await client.postNewTodo({ title: "New Posted Todo", completed: false, });
     setTodos([...todos, newTodo]);
   };
-  const editTodo = (todo: any) => {
+  const editTodo = (todo: Todo) => {
     const updatedTodos = todos.map(
       (t) => t.id === todo.id ? { ...todo, editing: true } : t );
     setTodos(updatedTodos);
   };
-  const updateTodo = async (todo: any) => {
+  const updateTodo = async (todo: Todo) => {
     await client.updateTodo(todo);
     setTodos(todos.map((t) => (t.id === todo.id ? todo : t)));
   };

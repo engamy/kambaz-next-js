@@ -7,7 +7,7 @@ const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER || "http://localhost:400
 
 export default function WorkingWithArrays() {
   const API = `${HTTP_SERVER}/lab5/todos`;
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage] = useState<string | null>(null);
   const [todo, setTodo] = useState({
     id: "1",
     title: "NodeJS Assignment",

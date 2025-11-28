@@ -6,9 +6,22 @@ import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { FormControl, Button } from "react-bootstrap";
 import * as client from "../client";
+import type { User } from "../client";
+
+interface AxiosError {
+  response?: {
+    status?: number;
+    data?: {
+      message?: string;
+      error?: string;
+      msg?: string;
+    };
+  };
+  message?: string;
+}
 
 export default function Signup() {
-  const [user, setUser] = useState<any>({});
+  const [user, setUser] = useState<User>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -16,36 +29,32 @@ export default function Signup() {
     try {
       setErrorMessage(null);
       
-      // Validate required fields
       if (!user.username || !user.password) {
         setErrorMessage("Username and password are required");
         return;
       }
       
       const signupResponse = await client.signup(user);
-      // After signup, fetch the full profile to ensure we have _id
       try {
         const currentUser = await client.profile();
         dispatch(setCurrentUser(currentUser));
-      } catch (profileError) {
-        // If profile fetch fails, use the signup response
+      } catch {
         dispatch(setCurrentUser(signupResponse));
       }
       router.push("/Account/Profile");
-    } catch (error: any) {
-      // Only log if it's not a handled error
-      if (error.response?.status !== 400) {
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response?.status !== 400) {
         console.error("Signup failed:", error);
       }
       
-      // Try to extract error message from various possible locations
       const message = 
-        error.response?.data?.message || 
-        error.response?.data?.error ||
-        error.response?.data?.msg ||
-        (error.response?.status === 400 ? "Username may already exist or invalid data provided" : null) ||
-        error.message || 
-        `Signup failed: ${error.response?.status ? `Status ${error.response.status}` : 'Unknown error'}`;
+        axiosError.response?.data?.message || 
+        axiosError.response?.data?.error ||
+        axiosError.response?.data?.msg ||
+        (axiosError.response?.status === 400 ? "Username may already exist or invalid data provided" : null) ||
+        axiosError.message || 
+        `Signup failed: ${axiosError.response?.status ? `Status ${axiosError.response.status}` : 'Unknown error'}`;
       
       if (message) {
         setErrorMessage(message);

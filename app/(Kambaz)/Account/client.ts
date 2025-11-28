@@ -10,7 +10,28 @@ export const axiosWithCredentials = axios.create({
 console.log("HTTP_SERVER =", HTTP_SERVER);
 console.log("USERS_API =", USERS_API);
 
-export const signin = async (credentials: any) => {
+export interface Credentials {
+  username?: string;
+  password?: string;
+}
+
+export interface User {
+  _id?: string;
+  id?: string;
+  username?: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  dob?: string;
+  role?: string;
+  loginId?: string;
+  section?: string;
+  lastActivity?: string;
+  totalActivity?: string;
+}
+
+export const signin = async (credentials: Credentials) => {
   const response = await axiosWithCredentials.post(`/api/users/signin`, credentials);
   return response.data;
 };
@@ -20,7 +41,7 @@ export const profile = async () => {
   return response.data;
 };
 
-export const signup = async (user: any) => {
+export const signup = async (user: User) => {
   const response = await axiosWithCredentials.post(`/api/users/signup`, user);
   return response.data;
 };
@@ -30,7 +51,7 @@ export const signout = async () => {
   return response.data;
 };
 
-export const updateUser = async (user: any) => {
+export const updateUser = async (user: User) => {
   const response = await axiosWithCredentials.put(`/api/users/${user._id}`, user);
   return response.data;
 };

@@ -2,13 +2,15 @@
 import { ReactNode, useState } from "react";
 import { useParams } from "next/navigation";
 import { FaAlignJustify } from "react-icons/fa6";
-import { courses } from "../../Database";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 import CourseNavigation from "./Navigation";
 import Breadcrumb from "./Breadcrumb";
 
 export default function CoursesLayout({ children }: { children: ReactNode }) {
   const params = useParams();
   const cid = String(params.cid);
+  const { courses } = useSelector((state: RootState) => state.coursesReducer);
   const course = courses.find((c) => c._id === cid);
   const [showNavigation, setShowNavigation] = useState(true);
 

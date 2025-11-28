@@ -8,6 +8,7 @@ import { setCurrentUser } from "../Account/reducer";
 import { RootState } from "../store";
 import * as client from "../Courses/client";
 import * as enrollmentsClient from "../Enrollments/client";
+import * as accountClient from "../Account/client";
 
 
 interface Course {
@@ -88,9 +89,31 @@ export default function Dashboard() {
     
     try {
       setErrorMessage(null);
+      
+      // First verify session is still valid
+      let sessionValid = false;
+      try {
+        const profileData = await accountClient.profile();
+        console.log("Session verified, user:", profileData);
+        sessionValid = true;
+      } catch (profileError) {
+        const profileAxiosError = profileError as { response?: { status?: number } };
+        console.error("Session verification failed:", profileAxiosError);
+        if (profileAxiosError.response?.status === 401) {
+          dispatch(setCurrentUser(null));
+          setErrorMessage("Your session has expired. Please sign in again.");
+          alert("Your session has expired. Please sign in again.");
+          return;
+        }
+        // If it's not a 401, continue anyway - might be a network issue
+        console.warn("Profile check failed but continuing:", profileError);
+      }
+      
       // Remove _id before creating - backend will generate a new one
       const { _id, ...courseData } = course;
+      console.log("Creating course with data:", courseData);
       const newCourse = await client.createCourse(courseData);
+      console.log("Course created successfully:", newCourse);
       // Refresh the course list to get the updated list from the server
       await fetchCourses();
       // Reset the form
@@ -102,17 +125,20 @@ export default function Dashboard() {
       });
     } catch (error) {
       const axiosError = error as { response?: { status?: number; data?: unknown }; message?: string };
+      console.error("Error adding course - full error:", error);
+      console.error("Error status:", axiosError.response?.status);
+      console.error("Error data:", axiosError.response?.data);
+      
       let message = "Failed to add course. Please try again.";
       
       if (axiosError.response?.status === 401) {
-        message = "You are not authenticated. Please sign out and sign in again.";
+        message = "You are not authenticated. The session may have expired. Please sign out and sign in again.";
         // Clear the current user if session is invalid
         dispatch(setCurrentUser(null));
       } else if (axiosError.message) {
         message = axiosError.message;
       }
       
-      console.error("Error adding course:", error);
       setErrorMessage(message);
       alert(message);
     }

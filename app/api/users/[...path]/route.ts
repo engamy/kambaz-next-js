@@ -21,18 +21,20 @@ export async function GET(
       credentials: 'include',
     });
 
-    const data = await response.text();
+    const contentType = response.headers.get('Content-Type') || 'application/json';
+    const isJson = contentType.includes('application/json');
+    const data = isJson ? await response.json() : await response.text();
     
     if (!response.ok) {
       return NextResponse.json(
-        { message: data || `Server error: ${response.status}` },
+        { message: (typeof data === 'string' ? data : data?.message) || `Server error: ${response.status}` },
         { status: response.status }
       );
     }
     
     // Forward response cookies to the client
     const responseHeaders = new Headers();
-    responseHeaders.set('Content-Type', response.headers.get('Content-Type') || 'application/json');
+    responseHeaders.set('Content-Type', contentType);
     
     // Forward all set-cookie headers (there can be multiple)
     const setCookieHeaders = response.headers.getSetCookie();
@@ -40,7 +42,7 @@ export async function GET(
       responseHeaders.append('set-cookie', cookie);
     });
     
-    return new NextResponse(data, {
+    return NextResponse.json(data, {
       status: response.status,
       headers: responseHeaders,
     });
@@ -74,18 +76,20 @@ export async function POST(
       body: JSON.stringify(body),
     });
 
-    const data = await response.text();
+    const contentType = response.headers.get('Content-Type') || 'application/json';
+    const isJson = contentType.includes('application/json');
+    const data = isJson ? await response.json() : await response.text();
     
     if (!response.ok) {
       return NextResponse.json(
-        { message: data || `Server error: ${response.status}` },
+        { message: (typeof data === 'string' ? data : data?.message) || `Server error: ${response.status}` },
         { status: response.status }
       );
     }
     
     // Forward response cookies to the client
     const responseHeaders = new Headers();
-    responseHeaders.set('Content-Type', response.headers.get('Content-Type') || 'application/json');
+    responseHeaders.set('Content-Type', contentType);
     
     // Forward all set-cookie headers (there can be multiple)
     const setCookieHeaders = response.headers.getSetCookie();
@@ -93,7 +97,7 @@ export async function POST(
       responseHeaders.append('set-cookie', cookie);
     });
     
-    return new NextResponse(data, {
+    return NextResponse.json(data, {
       status: response.status,
       headers: responseHeaders,
     });
@@ -127,18 +131,20 @@ export async function PUT(
       body: JSON.stringify(body),
     });
 
-    const data = await response.text();
+    const contentType = response.headers.get('Content-Type') || 'application/json';
+    const isJson = contentType.includes('application/json');
+    const data = isJson ? await response.json() : await response.text();
     
     if (!response.ok) {
       return NextResponse.json(
-        { message: data || `Server error: ${response.status}` },
+        { message: (typeof data === 'string' ? data : data?.message) || `Server error: ${response.status}` },
         { status: response.status }
       );
     }
     
     // Forward response cookies to the client
     const responseHeaders = new Headers();
-    responseHeaders.set('Content-Type', response.headers.get('Content-Type') || 'application/json');
+    responseHeaders.set('Content-Type', contentType);
     
     // Forward all set-cookie headers (there can be multiple)
     const setCookieHeaders = response.headers.getSetCookie();
@@ -146,7 +152,7 @@ export async function PUT(
       responseHeaders.append('set-cookie', cookie);
     });
     
-    return new NextResponse(data, {
+    return NextResponse.json(data, {
       status: response.status,
       headers: responseHeaders,
     });

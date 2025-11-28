@@ -1,11 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaEllipsisV, FaPlus, FaSearch, FaCheckCircle, FaFileAlt, FaChevronDown, FaTrash } from "react-icons/fa";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../store";
-import { deleteAssignment } from "./reducer";
+import * as client from "./client";
 import DeleteAssignmentModal from "./DeleteAssignmentModal";
 
 interface Assignment {
@@ -37,20 +35,39 @@ export default function Assignments() {
     const params = useParams();
     const router = useRouter();
     const courseId = params.cid as string;
-    const { assignments } = useSelector((state: RootState) => state.assignmentsReducer);
-    const dispatch = useDispatch();
+    const [assignments, setAssignments] = useState<Assignment[]>([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment | null>(null);
+
+    useEffect(() => {
+        const fetchAssignments = async () => {
+            if (courseId) {
+                try {
+                    const fetchedAssignments = await client.findAssignmentsForCourse(courseId);
+                    setAssignments(fetchedAssignments);
+                } catch (error) {
+                    console.error("Error fetching assignments:", error);
+                }
+            }
+        };
+        fetchAssignments();
+    }, [courseId]);
 
     const handleDeleteClick = (assignment: Assignment) => {
         setAssignmentToDelete(assignment);
         setShowDeleteModal(true);
     };
 
-    const handleDeleteConfirm = () => {
+    const handleDeleteConfirm = async () => {
         if (assignmentToDelete) {
-            dispatch(deleteAssignment(assignmentToDelete._id));
-            setAssignmentToDelete(null);
+            try {
+                await client.deleteAssignment(assignmentToDelete._id);
+                setAssignments(assignments.filter((a) => a._id !== assignmentToDelete._id));
+                setAssignmentToDelete(null);
+                setShowDeleteModal(false);
+            } catch (error) {
+                console.error("Error deleting assignment:", error);
+            }
         }
     };
 
@@ -59,7 +76,7 @@ export default function Assignments() {
         setAssignmentToDelete(null);
     };
     
-    // Filter assignments for the current course
+    // Filter assignments for the current course (should already be filtered by API, but keeping for safety)
     const courseAssignments = assignments.filter((assignment: Assignment) => assignment.course === courseId);
     
     // Group assignments by assignment group

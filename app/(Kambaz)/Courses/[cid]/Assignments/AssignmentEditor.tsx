@@ -3,9 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button, Row, Col, Container } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { addAssignment, updateAssignment } from "./reducer";
-import { RootState } from "../../../store";
+import * as client from "./client";
 
 interface Assignment {
   _id: string;
@@ -38,14 +36,25 @@ export default function AssignmentEditor() {
   const router = useRouter();
   const courseId = params.cid as string;
   const assignmentId = params.aid as string | undefined;
-  const dispatch = useDispatch();
-  const { assignments } = useSelector((state: RootState) => state.assignmentsReducer);
+  const [assignment, setAssignment] = useState<Assignment | null>(null);
 
   // Check if we're editing or creating
   const isEditing = !!assignmentId;
-  const assignment = isEditing 
-    ? assignments.find((a: Assignment) => a._id === assignmentId)
-    : null;
+
+  useEffect(() => {
+    const fetchAssignment = async () => {
+      if (isEditing && assignmentId && courseId) {
+        try {
+          const assignments = await client.findAssignmentsForCourse(courseId);
+          const foundAssignment = assignments.find((a: Assignment) => a._id === assignmentId);
+          setAssignment(foundAssignment || null);
+        } catch (error) {
+          console.error("Error fetching assignment:", error);
+        }
+      }
+    };
+    fetchAssignment();
+  }, [isEditing, assignmentId, courseId]);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -72,16 +81,16 @@ export default function AssignmentEditor() {
     }
   }, [assignment]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name.trim()) {
       alert("Please enter an assignment name");
       return;
     }
 
-    if (isEditing && assignment) {
-      // Update existing assignment
-      dispatch(
-        updateAssignment({
+    try {
+      if (isEditing && assignment) {
+        // Update existing assignment
+        const updatedAssignment = {
           ...assignment,
           name,
           description,
@@ -92,26 +101,24 @@ export default function AssignmentEditor() {
           availableFromTime,
           untilDate,
           untilTime,
-        })
-      );
-    } else {
-      // Create new assignment
-      // Get existing assignments from Redux to calculate next assignment number
-      const existingAssignments = assignments.filter((a: Assignment) => a.course === courseId);
-      const assignmentNumbers = existingAssignments
-        .filter((a: Assignment) => a.title?.startsWith("A"))
-        .map((a: Assignment) => {
-          const match = a.title?.match(/A(\d+)/);
-          return match ? parseInt(match[1]) : 0;
-        });
-      const nextNumber = assignmentNumbers.length > 0 ? Math.max(...assignmentNumbers) + 1 : 1;
-      const title = `A${nextNumber}`;
+        };
+        await client.updateAssignment(updatedAssignment);
+      } else {
+        // Create new assignment
+        // Get existing assignments to calculate next assignment number
+        const existingAssignments = await client.findAssignmentsForCourse(courseId);
+        const assignmentNumbers = existingAssignments
+          .filter((a: Assignment) => a.title?.startsWith("A"))
+          .map((a: Assignment) => {
+            const match = a.title?.match(/A(\d+)/);
+            return match ? parseInt(match[1]) : 0;
+          });
+        const nextNumber = assignmentNumbers.length > 0 ? Math.max(...assignmentNumbers) + 1 : 1;
+        const title = `A${nextNumber}`;
 
-      dispatch(
-        addAssignment({
+        await client.createAssignmentForCourse(courseId, {
           title,
           name,
-          course: courseId,
           description,
           points,
           assignmentGroup: "ASSIGNMENTS",
@@ -130,11 +137,14 @@ export default function AssignmentEditor() {
           availableFromTime,
           untilDate,
           untilTime,
-        })
-      );
-    }
+        });
+      }
 
-    router.push(`/Courses/${courseId}/Assignments`);
+      router.push(`/Courses/${courseId}/Assignments`);
+    } catch (error) {
+      console.error("Error saving assignment:", error);
+      alert("Error saving assignment. Please try again.");
+    }
   };
 
   const handleCancel = () => {

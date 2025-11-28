@@ -12,7 +12,13 @@ export default function Session({ children }: { children: any }) {
       const currentUser = await client.profile();
       dispatch(setCurrentUser(currentUser));
     } catch (err: any) {
-      console.error(err);
+      // If user is not logged in (401/403), set currentUser to null
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        dispatch(setCurrentUser(null));
+      } else {
+        // Only log unexpected errors
+        console.error(err);
+      }
     }
     setPending(false);
   };

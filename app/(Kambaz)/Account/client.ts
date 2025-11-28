@@ -11,12 +11,12 @@ console.log("HTTP_SERVER =", HTTP_SERVER);
 console.log("USERS_API =", USERS_API);
 
 export const signin = async (credentials: any) => {
-  const response = await axiosWithCredentials.post(`${USERS_API}/signin`, credentials);
+  const response = await axiosWithCredentials.post(`/api/users/signin`, credentials);
   return response.data;
 };
 
 export const profile = async () => {
-  const response = await axiosWithCredentials.post(`${USERS_API}/profile`);
+  const response = await axiosWithCredentials.post(`/api/users/profile`);
   return response.data;
 };
 

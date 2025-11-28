@@ -35,7 +35,7 @@ export default function WorkingWithObjectsAsynchronously() {
           onChange={(e) => setAssignment({ ...assignment, completed: e.target.checked }) } />
         <label className="form-check-label" htmlFor="wd-completed"> Completed </label>
       </div>
-      <button className="btn btn-primary me-2" onClick={() => updateTitle(assignment.title)} >
+      <button className="btn btn-primary me-2" onClick={() => updateTitle(assignment.title || "")} >
         Update Title
       </button>
       <pre>{JSON.stringify(assignment, null, 2)}</pre>

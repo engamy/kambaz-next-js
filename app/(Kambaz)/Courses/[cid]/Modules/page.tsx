@@ -9,7 +9,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import GreenCheckmark from "./GreenCheckmark";
 import ModulesControls from "./ModulesControls";
 import ModuleControlButtons from "./ModuleControlButtons";
-import { setModules, addModule, editModule, updateModule, deleteModule } from "./reducer";
+import { setModules, editModule, updateModule } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
 
@@ -27,6 +27,7 @@ interface Module {
   course: string;
   lessons?: Lesson[];
   editing?: boolean;
+  [key: string]: unknown;
 }
 
 function LessonControlButtons() {
@@ -42,35 +43,36 @@ function LessonControlButtons() {
 
 export default function Modules() {
   const { cid } = useParams();
-  const courseId = Array.isArray(cid) ? cid[0] : (cid || "");
   const [moduleName, setModuleName] = useState("");
   const { modules } = useSelector((state: RootState) => state.modulesReducer);
   const dispatch = useDispatch();
 
-  const onUpdateModule = async (module: any) => {
+  const onUpdateModule = async (module: Module) => {
     await client.updateModule(module);
-    const newModules = modules.map((m: any) => m._id === module._id ? module : m );
+    const newModules = modules.map((m: Module) => m._id === module._id ? module : m );
     dispatch(setModules(newModules));
   };
 
   const onRemoveModule = async (moduleId: string) => {
     await client.deleteModule(moduleId);
-    dispatch(setModules(modules.filter((m: any) => m._id !== moduleId)));
+    dispatch(setModules(modules.filter((m: Module) => m._id !== moduleId)));
   };
 
   const onCreateModuleForCourse = async () => {
     if (!cid) return;
-    const newModule = { name: moduleName, course: cid };
-    const module = await client.createModuleForCourse(cid as string, newModule);
-    dispatch(setModules([...modules, module]));
+    const courseId = Array.isArray(cid) ? cid[0] : cid;
+    const newModule: Module = { name: moduleName, course: courseId, _id: "" };
+    const createdModule = await client.createModuleForCourse(courseId, newModule);
+    dispatch(setModules([...modules, createdModule]));
   }
 
   const fetchModules = async () => {
-    const modules = await client.findModulesForCourse(cid as string);
-    dispatch(setModules(modules));
+    const fetchedModules = await client.findModulesForCourse(cid as string);
+    dispatch(setModules(fetchedModules));
   };
   useEffect(() => {
     fetchModules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   return (

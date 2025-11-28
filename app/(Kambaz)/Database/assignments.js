@@ -1,4 +1,4 @@
-export default [
+const assignments = [
   { 
     "_id": "A101", 
     "title": "A1", 
@@ -216,3 +216,5 @@ export default [
     "untilTime": ""
   }
 ];
+
+export default assignments;

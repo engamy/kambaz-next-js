@@ -9,7 +9,35 @@ export const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
 
-export const createModuleForCourse = async (courseId: string, module: any) => {
+interface Module {
+  _id?: string;
+  name?: string;
+  description?: string;
+  course?: string;
+  lessons?: unknown[];
+  [key: string]: unknown;
+}
+
+interface Course {
+  _id?: string;
+  name?: string;
+  number?: string;
+  startDate?: string;
+  endDate?: string;
+  department?: string;
+  credits?: number;
+  description?: string;
+  image?: string;
+  [key: string]: unknown;
+}
+
+interface AxiosError {
+  response?: {
+    status?: number;
+  };
+}
+
+export const createModuleForCourse = async (courseId: string, module: Module) => {
   const response = await axiosWithCredentials.post(`/api/courses/${courseId}/modules`, module);
   return response.data;
 };
@@ -28,15 +56,16 @@ export const findMyCourses = async () => {
   try {
     const { data } = await axiosWithCredentials.get(`/api/users/current/courses`);
     return data;
-  } catch (error: any) {
-    if (error.response?.status === 401 || error.response?.status === 403) {
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response?.status === 401 || axiosError.response?.status === 403) {
       return [];
     }
     throw error;
   }
 };
 
-export const createCourse = async (course: any) => {
+export const createCourse = async (course: Course) => {
   const { data } = await axiosWithCredentials.post(`/api/users/current/courses`, course);
   return data;
 };
@@ -46,12 +75,13 @@ export const deleteCourse = async (id: string) => {
   return data;
 };
 
-export const updateCourse = async (course: any) => {
+export const updateCourse = async (course: Course) => {
   try {
     const { data } = await axiosWithCredentials.put(`/api/courses/${course._id}`, course);
     return data;
-  } catch (error: any) {
-    if (error.response?.status === 400) {
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response?.status === 400) {
       throw new Error("You need to try again");
     }
     throw error;
@@ -63,7 +93,7 @@ export const deleteModule = async (moduleId: string) => {
   return data;
 };
 
-export const updateModule = async (module: any) => {
+export const updateModule = async (module: Module) => {
   const { data } = await axiosWithCredentials.put(`/api/modules/${module._id}`, module);
   return data;
 };

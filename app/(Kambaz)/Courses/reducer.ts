@@ -12,6 +12,7 @@ interface Course {
   credits: number;
   description: string;
   image?: string;
+  [key: string]: unknown;
 }
 
 interface CourseInput {

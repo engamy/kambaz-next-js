@@ -1,6 +1,5 @@
 'use client';
 
-import Link from "next/link";
 import { FormControl, Button } from "react-bootstrap";
 import * as client from "../client";
 import { setCurrentUser } from "../reducer";
@@ -8,17 +7,41 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react"; 
 import { RootState } from "../../store";
 
+interface User {
+  _id?: string;
+  id?: string;
+  username?: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  dob?: string;
+  role?: string;
+  [key: string]: unknown;
+}
+
+interface AxiosError {
+  response?: {
+    status?: number;
+    data?: {
+      message?: string;
+      error?: string;
+    };
+  };
+  message?: string;
+}
+
 export default function Profile() {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-  const [profile, setProfile] = useState<any>({});
+  const [profile, setProfile] = useState<User>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const dispatch = useDispatch();
   
   useEffect(() => {
     if (currentUser) {
       // Ensure we copy all fields including _id
-      const userAny = currentUser as any;
-      setProfile({ ...userAny });
+      const userData = currentUser as User;
+      setProfile({ ...userData });
     } else {
       // If no currentUser, try to fetch profile from server
       const fetchProfile = async () => {
@@ -43,8 +66,8 @@ export default function Profile() {
       setErrorMessage(null);
       
       // Ensure we have _id - get it from currentUser if missing in profile
-      const currentUserAny = currentUser as any;
-      const userId = profile._id || (profile as any).id || currentUserAny?._id || currentUserAny?.id;
+      const currentUserData = currentUser as User | null;
+      const userId = profile._id || profile.id || currentUserData?._id || currentUserData?.id;
       
       if (!userId) {
         setErrorMessage("User ID is missing. Please sign in again.");
@@ -57,13 +80,14 @@ export default function Profile() {
       const updatedProfile = await client.updateUser(profileToUpdate);
       dispatch(setCurrentUser(updatedProfile));
       setProfile(updatedProfile);
-    } catch (error: any) {
-      console.error("Update profile failed:", error);
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.error("Update profile failed:", axiosError);
       const message = 
-        error.response?.data?.message || 
-        error.response?.data?.error ||
-        error.message || 
-        `Update failed: ${error.response?.status ? `Status ${error.response.status}` : 'Unknown error'}`;
+        axiosError.response?.data?.message || 
+        axiosError.response?.data?.error ||
+        axiosError.message || 
+        `Update failed: ${axiosError.response?.status ? `Status ${axiosError.response.status}` : 'Unknown error'}`;
       setErrorMessage(message);
     }
   };

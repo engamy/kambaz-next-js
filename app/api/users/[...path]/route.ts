@@ -4,10 +4,11 @@ const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER || 'http://localhost:400
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
-    const path = params.path.join('/');
+    const resolvedParams = await params;
+    const path = resolvedParams.path.join('/');
     const url = `${HTTP_SERVER}/api/users/${path}${request.nextUrl.search}`;
     const body = await request.json();
     
@@ -34,9 +35,10 @@ export async function POST(
         'Content-Type': response.headers.get('Content-Type') || 'application/json',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as Error;
     return NextResponse.json(
-      { error: error.message || 'Proxy error' },
+      { error: err.message || 'Proxy error' },
       { status: 500 }
     );
   }
@@ -44,10 +46,11 @@ export async function POST(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
-    const path = params.path.join('/');
+    const resolvedParams = await params;
+    const path = resolvedParams.path.join('/');
     const url = `${HTTP_SERVER}/api/users/${path}${request.nextUrl.search}`;
     const body = await request.json();
     
@@ -74,9 +77,10 @@ export async function PUT(
         'Content-Type': response.headers.get('Content-Type') || 'application/json',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as Error;
     return NextResponse.json(
-      { error: error.message || 'Proxy error' },
+      { error: err.message || 'Proxy error' },
       { status: 500 }
     );
   }

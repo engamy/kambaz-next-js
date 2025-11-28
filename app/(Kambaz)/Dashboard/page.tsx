@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Row, Col, Card, CardImg, CardBody, CardTitle, CardText, Button, FormControl } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewCourse, deleteCourse, updateCourse, setCourses } from "../Courses/reducer";
+import { setCourses } from "../Courses/reducer";
 import { RootState } from "../store";
 import * as client from "../Courses/client";
 import * as enrollmentsClient from "../Enrollments/client";
@@ -19,6 +19,7 @@ interface Course {
   credits: number;
   description: string;
   image?: string;
+  [key: string]: unknown;
 }
 
 export default function Dashboard() {
@@ -27,20 +28,26 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const [enrollments, setEnrollments] = useState<Record<string, boolean>>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const currentUserAny = currentUser as any;
-  const userRole = currentUserAny?.role?.toUpperCase();
+  
+  interface UserWithRole {
+    role?: string;
+    [key: string]: unknown;
+  }
+  
+  const currentUserData = currentUser as UserWithRole | null;
+  const userRole = currentUserData?.role?.toUpperCase();
   const isStudent = userRole === "STUDENT";
   const isFaculty = userRole === "FACULTY" || (!isStudent && currentUser);
   
   useEffect(() => {
     console.log("Dashboard Debug:", {
       currentUser: currentUser,
-      userRole: currentUserAny?.role,
+      userRole: currentUserData?.role,
       userRoleUpper: userRole,
       isStudent,
       isFaculty
     });
-  }, [currentUser, userRole, isStudent, isFaculty]);
+  }, [currentUser, currentUserData?.role, userRole, isStudent, isFaculty]);
   
   const fetchCourses = async () => {
     try {
@@ -53,7 +60,7 @@ export default function Dashboard() {
           try {
             const enrollment = await enrollmentsClient.findEnrollment(course._id);
             enrollmentStatus[course._id] = !!enrollment;
-          } catch (error) {
+          } catch {
             enrollmentStatus[course._id] = false;
           }
         }
@@ -65,8 +72,8 @@ export default function Dashboard() {
         const allCourses = await client.fetchAllCourses();
         dispatch(setCourses(allCourses || []));
       }
-    } catch (error) {
-      console.error("Error fetching courses:", error);
+    } catch {
+      console.error("Error fetching courses");
       dispatch(setCourses([]));
     }
   };
@@ -77,7 +84,7 @@ export default function Dashboard() {
   };
 
   const onDeleteCourse = async (courseId: string) => {
-    const status = await client.deleteCourse(courseId);
+    await client.deleteCourse(courseId);
     dispatch(setCourses(courses.filter((course) => course._id !== courseId)));
   };
 
@@ -89,9 +96,10 @@ export default function Dashboard() {
           if (c._id === course._id) { return course; }
           else { return c; }
       })));
-    } catch (error: any) {
-      console.error("Error updating course:", error);
-      const message = error.message || "You need to try again";
+    } catch (error) {
+      const err = error as Error;
+      console.error("Error updating course:", err);
+      const message = err.message || "You need to try again";
       setErrorMessage(message);
       alert(message);
     }
@@ -119,6 +127,7 @@ export default function Dashboard() {
     if (currentUser) {
       fetchCourses();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   const [course, setCourse] = useState<Course>({
@@ -212,7 +221,7 @@ export default function Dashboard() {
         <button id="wd-edit-course-click"
           onClick={(event) => {
             event.preventDefault();
-            setCourse(course);
+            setCourse(course as Course);
           }}
           className="btn btn-warning me-2 float-end" >
           Edit

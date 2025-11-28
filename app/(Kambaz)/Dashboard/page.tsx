@@ -8,7 +8,6 @@ import { setCurrentUser } from "../Account/reducer";
 import { RootState } from "../store";
 import * as client from "../Courses/client";
 import * as enrollmentsClient from "../Enrollments/client";
-import * as accountClient from "../Account/client";
 
 
 interface Course {
@@ -89,19 +88,6 @@ export default function Dashboard() {
     
     try {
       setErrorMessage(null);
-      // Verify session is still valid before creating course
-      try {
-        await accountClient.profile();
-      } catch (profileError) {
-        const profileAxiosError = profileError as { response?: { status?: number } };
-        if (profileAxiosError.response?.status === 401) {
-          dispatch(setCurrentUser(null));
-          setErrorMessage("Your session has expired. Please sign in again.");
-          alert("Your session has expired. Please sign in again.");
-          return;
-        }
-      }
-      
       // Remove _id before creating - backend will generate a new one
       const { _id, ...courseData } = course;
       const newCourse = await client.createCourse(courseData);

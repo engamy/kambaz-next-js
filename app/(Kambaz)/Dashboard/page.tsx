@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Row, Col, Card, CardImg, CardBody, CardTitle, CardText, Button, FormControl } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewCourse, deleteCourse, updateCourse, setCourses } from "../Courses/reducer";
+import { setCourses } from "../Courses/reducer";
 import { RootState } from "../store";
 import * as client from "../Courses/client";
 import * as enrollmentsClient from "../Enrollments/client";
@@ -26,7 +26,10 @@ export default function Dashboard() {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const dispatch = useDispatch();
   const [enrollments, setEnrollments] = useState<Record<string, boolean>>({});
-  const currentUserAny = currentUser as any;
+  interface UserWithRole {
+    role?: string;
+  }
+  const currentUserAny = currentUser as UserWithRole | null;
   const isStudent = currentUserAny?.role === "STUDENT";
   const isFaculty = currentUserAny?.role === "FACULTY";
   
@@ -69,7 +72,7 @@ export default function Dashboard() {
   };
 
   const onDeleteCourse = async (courseId: string) => {
-    const status = await client.deleteCourse(courseId);
+    await client.deleteCourse(courseId);
     dispatch(setCourses(courses.filter((course) => course._id !== courseId)));
   };
 
@@ -102,7 +105,7 @@ export default function Dashboard() {
     if (currentUser) {
       fetchCourses();
     }
-  }, [currentUser]);
+  }, [currentUser, isStudent, isFaculty]);
 
   const [course, setCourse] = useState<Course>({
     _id: "0", name: "New Course", number: "New Number",

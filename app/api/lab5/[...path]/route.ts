@@ -4,11 +4,10 @@ const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER || 'http://localhost:400
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
+  { params }: { params: { path: string[] } }
 ) {
   try {
-    const resolvedParams = await params;
-    const path = resolvedParams.path.join('/');
+    const path = params.path.join('/');
     const url = `${HTTP_SERVER}/lab5/${path}${request.nextUrl.search}`;
     
     const response = await fetch(url, {
@@ -26,10 +25,9 @@ export async function GET(
         'Content-Type': response.headers.get('Content-Type') || 'application/json',
       },
     });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Proxy error';
+  } catch (error: any) {
     return NextResponse.json(
-      { error: errorMessage },
+      { error: error.message || 'Proxy error' },
       { status: 500 }
     );
   }

@@ -7,29 +7,10 @@ export const axiosWithCredentials = axios.create({
   baseURL: HTTP_SERVER,
   withCredentials: true, 
 });
+console.log("HTTP_SERVER =", HTTP_SERVER);
+console.log("USERS_API =", USERS_API);
 
-export interface Credentials {
-  username?: string;
-  password?: string;
-}
-
-export interface User {
-  _id?: string;
-  id?: string;
-  username?: string;
-  password?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  dob?: string;
-  role?: string;
-  loginId?: string;
-  section?: string;
-  lastActivity?: string;
-  totalActivity?: string;
-}
-
-export const signin = async (credentials: Credentials) => {
+export const signin = async (credentials: any) => {
   const response = await axiosWithCredentials.post(`/api/users/signin`, credentials);
   return response.data;
 };
@@ -39,7 +20,7 @@ export const profile = async () => {
   return response.data;
 };
 
-export const signup = async (user: User) => {
+export const signup = async (user: any) => {
   const response = await axiosWithCredentials.post(`/api/users/signup`, user);
   return response.data;
 };
@@ -49,7 +30,7 @@ export const signout = async () => {
   return response.data;
 };
 
-export const updateUser = async (user: User) => {
+export const updateUser = async (user: any) => {
   const response = await axiosWithCredentials.put(`/api/users/${user._id}`, user);
   return response.data;
 };

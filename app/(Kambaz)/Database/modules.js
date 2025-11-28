@@ -1,4 +1,4 @@
-const modules = [
+export default [
   {
     "_id": "M101",
     "name": "Introduction to Rocket Propulsion",
@@ -114,5 +114,3 @@ const modules = [
     "course": "RS103"
   }
 ];
-
-export default modules;

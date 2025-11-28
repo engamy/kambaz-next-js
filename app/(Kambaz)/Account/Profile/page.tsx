@@ -1,41 +1,32 @@
 'use client';
 
+import Link from "next/link";
 import { FormControl, Button } from "react-bootstrap";
 import * as client from "../client";
-import type { User } from "../client";
 import { setCurrentUser } from "../reducer";
 import { useDispatch, useSelector } from "react-redux";  
 import { useState, useEffect } from "react"; 
 import { RootState } from "../../store";
 
-interface AxiosError {
-  response?: {
-    status?: number;
-    data?: {
-      message?: string;
-      error?: string;
-    };
-  };
-  message?: string;
-}
-
 export default function Profile() {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-  const [profile, setProfile] = useState<User>({});
+  const [profile, setProfile] = useState<any>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const dispatch = useDispatch();
   
   useEffect(() => {
     if (currentUser) {
-      const user = currentUser as User;
-      setProfile({ ...user });
+      // Ensure we copy all fields including _id
+      const userAny = currentUser as any;
+      setProfile({ ...userAny });
     } else {
+      // If no currentUser, try to fetch profile from server
       const fetchProfile = async () => {
         try {
-          const fetchedProfile = await client.profile();
-          if (fetchedProfile) {
-            dispatch(setCurrentUser(fetchedProfile));
-            setProfile(fetchedProfile);
+          const profile = await client.profile();
+          if (profile) {
+            dispatch(setCurrentUser(profile));
+            setProfile(profile);
           }
         } catch (error) {
           console.error("Failed to fetch profile:", error);
@@ -51,27 +42,28 @@ export default function Profile() {
     try {
       setErrorMessage(null);
       
-      const currentUserTyped = currentUser as User | null;
-      const userId = profile._id || profile.id || currentUserTyped?._id || currentUserTyped?.id;
+      // Ensure we have _id - get it from currentUser if missing in profile
+      const currentUserAny = currentUser as any;
+      const userId = profile._id || (profile as any).id || currentUserAny?._id || currentUserAny?.id;
       
       if (!userId) {
         setErrorMessage("User ID is missing. Please sign in again.");
         return;
       }
       
-      const profileToUpdate: User = { ...profile, _id: userId };
+      // Ensure profile has _id before updating
+      const profileToUpdate = { ...profile, _id: userId };
       
       const updatedProfile = await client.updateUser(profileToUpdate);
       dispatch(setCurrentUser(updatedProfile));
       setProfile(updatedProfile);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Update profile failed:", error);
-      const axiosError = error as AxiosError;
       const message = 
-        axiosError.response?.data?.message || 
-        axiosError.response?.data?.error ||
-        axiosError.message || 
-        `Update failed: ${axiosError.response?.status ? `Status ${axiosError.response.status}` : 'Unknown error'}`;
+        error.response?.data?.message || 
+        error.response?.data?.error ||
+        error.message || 
+        `Update failed: ${error.response?.status ? `Status ${error.response.status}` : 'Unknown error'}`;
       setErrorMessage(message);
     }
   };

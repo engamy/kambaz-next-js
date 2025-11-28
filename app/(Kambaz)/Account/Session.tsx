@@ -1,39 +1,31 @@
 "use client";
 
 import * as client from "./client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { setCurrentUser } from "./reducer";
 import { useDispatch } from "react-redux";
-import { ReactNode } from "react";
-
-interface AxiosError {
-  response?: {
-    status?: number;
-  };
-}
-
-export default function Session({ children }: { children: ReactNode }) {
+export default function Session({ children }: { children: any }) {
   const [pending, setPending] = useState(true);
   const dispatch = useDispatch();
-  const fetchProfile = useCallback(async () => {
+  const fetchProfile = async () => {
     try {
       const currentUser = await client.profile();
       dispatch(setCurrentUser(currentUser));
-    } catch (err) {
-      const axiosError = err as AxiosError;
-      if (axiosError.response?.status === 401 || axiosError.response?.status === 403) {
+    } catch (err: any) {
+      // If user is not logged in (401/403), set currentUser to null
+      if (err.response?.status === 401 || err.response?.status === 403) {
         dispatch(setCurrentUser(null));
       } else {
+        // Only log unexpected errors
         console.error(err);
       }
     }
     setPending(false);
-  }, [dispatch]);
+  };
   useEffect(() => {
     fetchProfile();
-  }, [fetchProfile]);
+  }, []);
   if (!pending) {
-    return <>{children}</>;
+    return children;
   }
-  return null;
 }

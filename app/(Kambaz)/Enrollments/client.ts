@@ -17,19 +17,12 @@ export const unenrollFromCourse = async (courseId: string) => {
   return response.data;
 };
 
-interface AxiosError {
-  response?: {
-    status?: number;
-  };
-}
-
 export const findEnrollment = async (courseId: string) => {
   try {
     const response = await axiosWithCredentials.get(`/api/users/current/courses/${courseId}/enrollments`);
     return response.data;
-  } catch (error) {
-    const axiosError = error as AxiosError;
-    if (axiosError.response?.status === 404) {
+  } catch (error: any) {
+    if (error.response?.status === 404) {
       return null;
     }
     throw error;

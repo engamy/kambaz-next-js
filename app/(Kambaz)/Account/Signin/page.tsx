@@ -4,9 +4,29 @@ import { useRouter } from "next/navigation";
 import { setCurrentUser } from "../reducer";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
+import * as db from "../../Database";
 import { FormControl, Button } from "react-bootstrap";
 import * as client from "../client";
-import type { Credentials } from "../client";
+
+interface Credentials {
+  username?: string;
+  password?: string;
+}
+
+interface User {
+  _id: string;
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  dob: string;
+  role: string;
+  loginId: string;
+  section: string;
+  lastActivity: string;
+  totalActivity: string;
+}
 
 export default function Signin() {
   const [credentials, setCredentials] = useState<Credentials>({});
@@ -18,7 +38,7 @@ export default function Signin() {
       if (!user) return;
       dispatch(setCurrentUser(user));
       router.push("/Account/Profile");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Signin failed:", error);
     }
   };

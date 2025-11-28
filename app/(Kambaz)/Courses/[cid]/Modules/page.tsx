@@ -9,7 +9,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import GreenCheckmark from "./GreenCheckmark";
 import ModulesControls from "./ModulesControls";
 import ModuleControlButtons from "./ModuleControlButtons";
-import { setModules, editModule, updateModule } from "./reducer";
+import { setModules, addModule, editModule, updateModule, deleteModule } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
 
@@ -47,31 +47,31 @@ export default function Modules() {
   const { modules } = useSelector((state: RootState) => state.modulesReducer);
   const dispatch = useDispatch();
 
-  const onUpdateModule = async (moduleToUpdate: Module) => {
-    await client.updateModule(moduleToUpdate);
-    const newModules = modules.map((m: Module) => m._id === moduleToUpdate._id ? moduleToUpdate : m );
+  const onUpdateModule = async (module: any) => {
+    await client.updateModule(module);
+    const newModules = modules.map((m: any) => m._id === module._id ? module : m );
     dispatch(setModules(newModules));
   };
 
   const onRemoveModule = async (moduleId: string) => {
     await client.deleteModule(moduleId);
-    dispatch(setModules(modules.filter((m: Module) => m._id !== moduleId)));
+    dispatch(setModules(modules.filter((m: any) => m._id !== moduleId)));
   };
 
   const onCreateModuleForCourse = async () => {
-    if (!courseId) return;
-    const newModule = { name: moduleName, course: courseId };
-    const createdModule = await client.createModuleForCourse(courseId, newModule);
-    dispatch(setModules([...modules, createdModule]));
+    if (!cid) return;
+    const newModule = { name: moduleName, course: cid };
+    const module = await client.createModuleForCourse(cid as string, newModule);
+    dispatch(setModules([...modules, module]));
   }
 
+  const fetchModules = async () => {
+    const modules = await client.findModulesForCourse(cid as string);
+    dispatch(setModules(modules));
+  };
   useEffect(() => {
-    const fetchModules = async () => {
-      const fetchedModules = await client.findModulesForCourse(cid as string);
-      dispatch(setModules(fetchedModules));
-    };
     fetchModules();
-  }, [cid, dispatch]);
+  }, []);
   
   return (
     <div className="wd-modules">

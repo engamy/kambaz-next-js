@@ -1,4 +1,4 @@
-const users = [
+export default [
   {
     "_id": "123",
     "username": "iron_man",
@@ -126,5 +126,3 @@ const users = [
     "totalActivity": "21:32:43"
   }
 ];
-
-export default users;

@@ -79,8 +79,27 @@ export default function Dashboard() {
   };
 
   const onAddNewCourse = async () => {
-    const newCourse = await client.createCourse(course);
-    dispatch(setCourses([ ...courses, newCourse ]));
+    try {
+      setErrorMessage(null);
+      // Remove _id before creating - backend will generate a new one
+      const { _id, ...courseData } = course;
+      const newCourse = await client.createCourse(courseData);
+      // Refresh the course list to get the updated list from the server
+      await fetchCourses();
+      // Reset the form
+      setCourse({
+        _id: "0", name: "New Course", number: "New Number",
+        startDate: "2023-09-10", endDate: "2023-12-15",
+        department: "", credits: 0,
+        image: "/images/reactjs.jpg", description: "New Description"
+      });
+    } catch (error) {
+      const err = error as Error;
+      console.error("Error adding course:", err);
+      const message = err.message || "Failed to add course. Please try again.";
+      setErrorMessage(message);
+      alert(message);
+    }
   };
 
   const onDeleteCourse = async (courseId: string) => {

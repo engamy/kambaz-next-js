@@ -48,12 +48,9 @@ export default function Dashboard() {
     try {
       setErrorMessage(null);
       
-      // Remove _id before creating - backend will generate a new one
       const { _id, ...courseData } = course;
       const newCourse = await client.createCourse(courseData);
-      // Refresh the course list to get the updated list from the server
       await fetchCourses();
-      // Reset the form
       setCourse({
         _id: "0", name: "New Course", number: "New Number",
         startDate: "2023-09-10", endDate: "2023-12-15",
@@ -104,7 +101,6 @@ export default function Dashboard() {
     if (currentUser) {
       fetchCourses();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   const [course, setCourse] = useState<Course>({

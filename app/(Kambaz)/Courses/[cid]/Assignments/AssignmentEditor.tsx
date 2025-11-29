@@ -38,7 +38,6 @@ export default function AssignmentEditor() {
   const assignmentId = params.aid as string | undefined;
   const [assignment, setAssignment] = useState<Assignment | null>(null);
 
-  // Check if we're editing or creating
   const isEditing = !!assignmentId;
 
   useEffect(() => {
@@ -66,7 +65,6 @@ export default function AssignmentEditor() {
   const [untilDate, setUntilDate] = useState("");
   const [untilTime, setUntilTime] = useState("");
 
-  // Load assignment data when editing
   useEffect(() => {
     if (assignment) {
       setName(assignment.name || "");
@@ -89,7 +87,6 @@ export default function AssignmentEditor() {
 
     try {
       if (isEditing && assignment) {
-        // Update existing assignment
         const updatedAssignment = {
           ...assignment,
           name,
@@ -104,8 +101,6 @@ export default function AssignmentEditor() {
         };
         await client.updateAssignment(updatedAssignment);
       } else {
-        // Create new assignment
-        // Get existing assignments to calculate next assignment number
         const existingAssignments = await client.findAssignmentsForCourse(courseId);
         const assignmentNumbers = existingAssignments
           .filter((a: Assignment) => a.title?.startsWith("A"))
@@ -151,7 +146,6 @@ export default function AssignmentEditor() {
     router.push(`/Courses/${courseId}/Assignments`);
   };
 
-  // Show loading/error state if editing but assignment not found
   if (isEditing && !assignment) {
     return (
       <Container className="mt-4">

@@ -76,10 +76,8 @@ export default function Assignments() {
         setAssignmentToDelete(null);
     };
     
-    // Filter assignments for the current course (should already be filtered by API, but keeping for safety)
     const courseAssignments = assignments.filter((assignment: Assignment) => assignment.course === courseId);
     
-    // Group assignments by assignment group
     const groupedAssignments = courseAssignments.reduce((groups: Record<string, Assignment[]>, assignment: Assignment) => {
         const group = assignment.assignmentGroup;
         if (!groups[group]) {

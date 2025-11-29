@@ -1,5 +1,4 @@
 export default function WorkingWithObjects(app) {
-  // Mock assignment object
   const assignment = {
     _id: "A101",
     title: "Propulsion Assignment",

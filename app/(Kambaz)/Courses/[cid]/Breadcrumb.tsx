@@ -5,12 +5,10 @@ import { usePathname } from "next/navigation";
 export default function Breadcrumb({ course }: { course: { name: string } | undefined; }) {
   const pathname = usePathname();
   
-  // Extract the section from the pathname
   const pathSegments = pathname.split("/");
   const courseIndex = pathSegments.indexOf("Courses");
-  const section = pathSegments[courseIndex + 2]; // Get the section after /Courses/[cid]/
+  const section = pathSegments[courseIndex + 2];
   
-  // Map section names to display names
   const getSectionDisplayName = (section: string) => {
     switch (section) {
       case "Home":

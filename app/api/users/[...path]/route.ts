@@ -32,18 +32,12 @@ export async function GET(
       );
     }
     
-    // Forward response cookies to the client
     const responseHeaders = new Headers();
     responseHeaders.set('Content-Type', contentType);
     
-    // Forward all set-cookie headers (there can be multiple)
-    // Remove domain attribute so cookie is set for current domain (frontend)
     const setCookieHeaders = response.headers.getSetCookie();
     setCookieHeaders.forEach(cookie => {
-      // Remove domain=... from cookie string so it defaults to current domain (frontend)
-      // This allows the cookie to be set for the frontend domain instead of backend domain
       let modifiedCookie = cookie.replace(/;\s*domain=[^;]+/gi, '');
-      // Ensure path is / for the cookie to be accessible across all routes
       if (!modifiedCookie.includes('path=')) {
         modifiedCookie += '; path=/';
       }
@@ -95,18 +89,12 @@ export async function POST(
       );
     }
     
-    // Forward response cookies to the client
     const responseHeaders = new Headers();
     responseHeaders.set('Content-Type', contentType);
     
-    // Forward all set-cookie headers (there can be multiple)
-    // Remove domain attribute so cookie is set for current domain (frontend)
     const setCookieHeaders = response.headers.getSetCookie();
     setCookieHeaders.forEach(cookie => {
-      // Remove domain=... from cookie string so it defaults to current domain (frontend)
-      // This allows the cookie to be set for the frontend domain instead of backend domain
       let modifiedCookie = cookie.replace(/;\s*domain=[^;]+/gi, '');
-      // Ensure path is / for the cookie to be accessible across all routes
       if (!modifiedCookie.includes('path=')) {
         modifiedCookie += '; path=/';
       }
@@ -158,18 +146,12 @@ export async function PUT(
       );
     }
     
-    // Forward response cookies to the client
     const responseHeaders = new Headers();
     responseHeaders.set('Content-Type', contentType);
     
-    // Forward all set-cookie headers (there can be multiple)
-    // Remove domain attribute so cookie is set for current domain (frontend)
     const setCookieHeaders = response.headers.getSetCookie();
     setCookieHeaders.forEach(cookie => {
-      // Remove domain=... from cookie string so it defaults to current domain (frontend)
-      // This allows the cookie to be set for the frontend domain instead of backend domain
       let modifiedCookie = cookie.replace(/;\s*domain=[^;]+/gi, '');
-      // Ensure path is / for the cookie to be accessible across all routes
       if (!modifiedCookie.includes('path=')) {
         modifiedCookie += '; path=/';
       }

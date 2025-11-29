@@ -2,9 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
+
+interface User {
+  _id?: string;
+  role?: string;
+  [key: string]: unknown;
+}
 
 export default function AccountNavigation() {
   const pathname = usePathname();
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const user = currentUser as User | null;
   
   const navItems = [
     { href: "/Account/Signin", label: "Signin" },
@@ -34,6 +44,23 @@ export default function AccountNavigation() {
           </div>
         );
       })}
+      {user && user.role === "ADMIN" && (
+        <div className="mb-3">
+          <Link 
+            href="/Account/Users"
+            className={`text-decoration-none ${pathname.endsWith('Users') ? 'text-dark' : 'text-danger'}`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              paddingLeft: pathname.endsWith('Users') ? '8px' : '0px',
+              borderLeft: pathname.endsWith('Users') ? '3px solid black' : 'none',
+              marginLeft: pathname.endsWith('Users') ? '-8px' : '0px'
+            }}
+          >
+            Users
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

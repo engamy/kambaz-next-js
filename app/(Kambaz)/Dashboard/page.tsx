@@ -4,7 +4,6 @@ import { Row, Col, Card, CardImg, CardBody, CardTitle, CardText, Button, FormCon
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCourses } from "../Courses/reducer";
-import { setCurrentUser } from "../Account/reducer";
 import { RootState } from "../store";
 import * as client from "../Courses/client";
 
@@ -48,8 +47,8 @@ export default function Dashboard() {
     try {
       setErrorMessage(null);
       
-      const { _id, ...courseData } = course;
-      const newCourse = await client.createCourse(courseData);
+      const { _id: _, ...courseData } = course;
+      await client.createCourse(courseData);
       await fetchCourses();
       setCourse({
         _id: "0", name: "New Course", number: "New Number",
@@ -101,6 +100,7 @@ export default function Dashboard() {
     if (currentUser) {
       fetchCourses();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   const [course, setCourse] = useState<Course>({

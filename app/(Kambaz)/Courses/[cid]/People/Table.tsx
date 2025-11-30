@@ -5,10 +5,20 @@ import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 // import * as db from "../../../../Database";
 import PeopleDetails from "./Details";
-import Link from "next/link";
 
+interface User {
+  _id: string;
+  firstName?: string;
+  lastName?: string;
+  loginId?: string;
+  section?: string;
+  role?: string;
+  lastActivity?: string;
+  totalActivity?: string;
+  [key: string]: unknown;
+}
 
-export default function PeopleTable({ users = [], fetchUsers }: { users?: any[]; fetchUsers: () => void; }) {
+export default function PeopleTable({ users = [], fetchUsers }: { users?: User[]; fetchUsers: () => void; }) {
   // const { cid } = useParams();
   // const { users, enrollments } = db;
   const [showDetails, setShowDetails] = useState(false);
@@ -37,7 +47,7 @@ export default function PeopleTable({ users = [], fetchUsers }: { users?: any[];
             //   enrollments.some((enrollment) => enrollment.user === usr._id && enrollment.course === cid)
             // )
             .filter((user) => user && user._id && (user.firstName || user.lastName || user.loginId))
-            .map((user: { _id: string; firstName: string; lastName: string; loginId: string; section: string; role: string; lastActivity: string; totalActivity: string }) => (
+            .map((user: User) => (
               <tr key={user._id}>
                 <td className="wd-full-name text-nowrap">
                 <span className="text-decoration-none"

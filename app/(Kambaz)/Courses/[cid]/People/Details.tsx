@@ -5,6 +5,18 @@ import { IoCloseSharp } from "react-icons/io5";
 import { FormControl } from "react-bootstrap";
 import * as client from "../../../Account/client";
 
+interface User {
+  _id?: string;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  email?: string;
+  role?: string;
+  section?: string;
+  loginId?: string;
+  totalActivity?: string;
+  [key: string]: unknown;
+}
 
 export default function PeopleDetails({ uid, onClose }: { uid: string | null; onClose: () => void; }) {
 
@@ -19,7 +31,7 @@ export default function PeopleDetails({ uid, onClose }: { uid: string | null; on
     onClose();
   };
     
-  const [user, setUser] = useState<any>({});
+  const [user, setUser] = useState<User>({});
   const [loading, setLoading] = useState(true);
 
   const deleteUser = async (uid: string) => {

@@ -52,7 +52,7 @@ export const signout = async () => {
   return response.data;
 };
 
-export const updateUser = async (user: any) => {
+export const updateUser = async (user: User) => {
   const response = await axiosWithCredentials.put(`${USERS_API}/${user._id}`, user);
   return response.data;
 };
@@ -77,7 +77,7 @@ export const deleteUser = async (userId: string) => {
   return response.data;
 };
 
-export const createUser = async (user: any) => {
+export const createUser = async (user: User) => {
   const response = await axiosWithCredentials.post(`${USERS_API}`, user);
   return response.data;
 };

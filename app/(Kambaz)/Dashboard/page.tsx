@@ -49,8 +49,8 @@ export default function Dashboard() {
       setErrorMessage(null);
       
       // Remove _id before creating - backend will generate a new one
-      const courseData = { ...course };
-      delete courseData._id;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { _id, ...courseData } = course;
       await client.createCourse(courseData);
       // Refresh the course list to get the updated list from the server
       await fetchCourses();

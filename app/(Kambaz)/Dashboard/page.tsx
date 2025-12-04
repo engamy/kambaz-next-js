@@ -31,7 +31,12 @@ export default function Dashboard() {
   const fetchCourses = async () => {
     try {
       const allCourses = await client.fetchAllCourses();
+      console.log("Fetched courses from API:", allCourses);
       if (Array.isArray(allCourses)) {
+        if (allCourses.length > 0) {
+          console.log("First course sample:", allCourses[0]);
+          console.log("First course name:", allCourses[0]?.name);
+        }
         dispatch(setCourses(allCourses));
       } else {
         console.error("Courses data is not an array:", allCourses);
@@ -160,6 +165,13 @@ export default function Dashboard() {
             if (!course || !course._id) {
               return null;
             }
+            // Debug: log the course object to see what fields it has
+            if (courses.indexOf(course) === 0) {
+              console.log("Rendering course:", course);
+              console.log("Course keys:", Object.keys(course));
+              console.log("Course name value:", course.name);
+              console.log("Course name type:", typeof course.name);
+            }
             return (
             <Col key={course._id} className="wd-dashboard-course" style={{ width: "300px" }}>
               <Card>
@@ -168,10 +180,10 @@ export default function Dashboard() {
                   <CardImg src="/images/reactjs.webp" variant="top" width="100%" height={160} />
                   <CardBody className="card-body">
                     <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden fw-bold" style={{ color: '#003366' }}>
-                      {course.name || "Unnamed Course"} 
+                      {course.name || course.title || "Unnamed Course"} 
                     </CardTitle>
                     <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
-                      {course.description || "No description available"} 
+                      {course.description || course.desc || "No description available"} 
                     </CardText>
                     <Button variant="primary"> Go </Button>
                     {currentUser?.role === "FACULTY" && (

@@ -7,6 +7,14 @@ export const axiosWithCredentials = axios.create({
   baseURL: HTTP_SERVER,
   withCredentials: true, 
 });
+
+// For authenticated requests through Next.js API route proxy (works in production)
+// This ensures cookies are set for the frontend domain, not the backend domain
+export const axiosApiProxy = axios.create({
+  baseURL: '', // Use relative URLs to hit Next.js API routes
+  withCredentials: true,
+});
+
 console.log("HTTP_SERVER =", HTTP_SERVER);
 console.log("USERS_API =", USERS_API);
 
@@ -28,26 +36,32 @@ interface User {
 }
 
 export const signin = async (credentials: Credentials) => {
-  const response = await axiosWithCredentials.post(`/api/users/signin`, credentials);
+  // Use Next.js API route proxy to maintain session cookies in production
+  // This ensures cookies are set for the frontend domain
+  const response = await axiosApiProxy.post(`/api/users/signin`, credentials);
   return response.data;
 };
 
 export const profile = async () => {
-  const response = await axiosWithCredentials.post(`/api/users/profile`);
+  // Use Next.js API route proxy to maintain session cookies in production
+  const response = await axiosApiProxy.post(`/api/users/profile`);
   return response.data;
 };
 
 export const signup = async (user: User) => {
-  const response = await axiosWithCredentials.post(`/api/users/signup`, user);
+  // Use Next.js API route proxy to maintain session cookies in production
+  const response = await axiosApiProxy.post(`/api/users/signup`, user);
   return response.data;
 };
 
 export const signout = async () => {
-  const response = await axiosWithCredentials.post(`/api/users/signout`);
+  // Use Next.js API route proxy to maintain session cookies in production
+  const response = await axiosApiProxy.post(`/api/users/signout`);
   return response.data;
 };
 
 export const updateUser = async (user: User) => {
-  const response = await axiosWithCredentials.put(`/api/users/${user._id}`, user);
+  // Use Next.js API route proxy to maintain session cookies in production
+  const response = await axiosApiProxy.put(`/api/users/${user._id}`, user);
   return response.data;
 };

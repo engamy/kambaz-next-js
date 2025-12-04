@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCourses } from "../Courses/reducer";
 import { RootState } from "../store";
 import * as client from "../Courses/client";
+import EnrollmentButton from "../Enrollments/EnrollmentButton";
 
 
 interface Course {
@@ -120,22 +121,26 @@ export default function Dashboard() {
           {errorMessage}
         </div>
       )}
-      <h5>New Course
-      <button onClick={onAddNewCourse} 
-      className="btn btn-primary float-end" 
-      id="wd-add-new-course-click" >
-         Add
-       </button>
-       <button onClick={onUpdateCourse} className="btn btn-secondary float-end" id="wd-update-course-click" >
-        Update
-      </button>
+      {currentUser?.role === "FACULTY" && (
+        <>
+          <h5>New Course
+          <button onClick={onAddNewCourse} 
+          className="btn btn-primary float-end" 
+          id="wd-add-new-course-click" >
+             Add
+           </button>
+           <button onClick={onUpdateCourse} className="btn btn-secondary float-end" id="wd-update-course-click" >
+            Update
+          </button>
 
-      </h5><br />
-      <FormControl value={course.name} className="mb-2"
-                   onChange={(e) => setCourse({ ...course, name: e.target.value }) } />
-      <FormControl value={course.description} as="textarea" rows={3}
-                   onChange={(e) => setCourse({ ...course, description: e.target.value }) } />
-      <hr />
+          </h5><br />
+          <FormControl value={course.name} className="mb-2"
+                       onChange={(e) => setCourse({ ...course, name: e.target.value }) } />
+          <FormControl value={course.description} as="textarea" rows={3}
+                       onChange={(e) => setCourse({ ...course, description: e.target.value }) } />
+          <hr />
+        </>
+      )}
 
 
       <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
@@ -153,25 +158,37 @@ export default function Dashboard() {
                     <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
                       {course.description} </CardText>
                     <Button variant="primary"> Go </Button>
-                    <button className="btn btn-danger ms-2"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        onDeleteCourse(course._id);
-                      }} >
-                      Delete
-                    </button>
-                    <button id="wd-edit-course-click"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        setCourse(course as Course);
-                      }}
-                      className="btn btn-warning me-2 float-end" >
-                      Edit
-                    </button>
+                    {currentUser?.role === "FACULTY" && (
+                      <>
+                        <button className="btn btn-danger ms-2"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            onDeleteCourse(course._id);
+                          }} >
+                          Delete
+                        </button>
+                        <button id="wd-edit-course-click"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            setCourse(course as Course);
+                          }}
+                          className="btn btn-warning me-2 float-end" >
+                          Edit
+                        </button>
+                      </>
+                    )}
 
 
                   </CardBody>
                 </Link>
+                {currentUser?.role === "STUDENT" && (
+                  <div className="p-2">
+                    <EnrollmentButton
+                      courseId={course._id}
+                      currentUserRole={currentUser.role}
+                    />
+                  </div>
+                )}
               </Card>
             </Col>
           ))}

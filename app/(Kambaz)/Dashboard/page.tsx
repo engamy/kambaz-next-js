@@ -31,9 +31,15 @@ export default function Dashboard() {
   const fetchCourses = async () => {
     try {
       const allCourses = await client.fetchAllCourses();
-      dispatch(setCourses(allCourses || []));
-    } catch {
-      console.error("Error fetching courses");
+      if (Array.isArray(allCourses)) {
+        dispatch(setCourses(allCourses));
+      } else {
+        console.error("Courses data is not an array:", allCourses);
+        dispatch(setCourses([]));
+      }
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      setErrorMessage("Failed to load courses. Please refresh the page.");
       dispatch(setCourses([]));
     }
   };
@@ -99,11 +105,9 @@ export default function Dashboard() {
 
 
   useEffect(() => {
-    if (currentUser) {
-      fetchCourses();
-    }
+    fetchCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser]);
+  }, []);
 
   const [course, setCourse] = useState<Course>({
     _id: "0", name: "New Course", number: "New Number",
@@ -145,9 +149,18 @@ export default function Dashboard() {
 
 
       <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
+      {courses.length === 0 && (
+        <div className="alert alert-info" role="alert">
+          No courses available. {currentUser?.role === "FACULTY" && "Create a new course to get started."}
+        </div>
+      )}
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
-          {courses.map((course) => (
+          {courses.map((course) => {
+            if (!course || !course._id) {
+              return null;
+            }
+            return (
             <Col key={course._id} className="wd-dashboard-course" style={{ width: "300px" }}>
               <Card>
                 <Link href={`/Courses/${course._id}/Home`}
@@ -155,9 +168,11 @@ export default function Dashboard() {
                   <CardImg src="/images/reactjs.webp" variant="top" width="100%" height={160} />
                   <CardBody className="card-body">
                     <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden fw-bold" style={{ color: '#003366' }}>
-                      {course.name} </CardTitle>
+                      {course.name || "Unnamed Course"} 
+                    </CardTitle>
                     <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
-                      {course.description} </CardText>
+                      {course.description || "No description available"} 
+                    </CardText>
                     <Button variant="primary"> Go </Button>
                     {currentUser?.role === "FACULTY" && (
                       <>
@@ -192,7 +207,8 @@ export default function Dashboard() {
                 )}
               </Card>
             </Col>
-          ))}
+            );
+          })}
         </Row>
       </div>
     </div>

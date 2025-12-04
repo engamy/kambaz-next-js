@@ -4,7 +4,6 @@ import { Row, Col, Card, CardImg, CardBody, CardTitle, CardText, Button, FormCon
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCourses } from "../Courses/reducer";
-import { setCurrentUser } from "../Account/reducer";
 import { RootState } from "../store";
 import * as client from "../Courses/client";
 import EnrollmentButton from "../Enrollments/EnrollmentButton";
@@ -50,8 +49,8 @@ export default function Dashboard() {
       setErrorMessage(null);
       
       // Remove _id before creating - backend will generate a new one
-      const { _id, ...courseData } = course;
-      const newCourse = await client.createCourse(courseData);
+      const { _id: _, ...courseData } = course;
+      await client.createCourse(courseData);
       // Refresh the course list to get the updated list from the server
       await fetchCourses();
       // Reset the form

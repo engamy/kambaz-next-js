@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Row, Col, Card, CardImg, CardBody, CardTitle, CardText, Button } from "react-bootstrap";
 import Link from "next/link";
 import { useSelector } from "react-redux";
@@ -46,7 +46,7 @@ export default function EnrollmentsPage() {
     }
   };
 
-  const checkEnrollments = async () => {
+  const checkEnrollments = useCallback(async () => {
     if (currentUser?.role !== "STUDENT") {
       setLoading(false);
       return;
@@ -65,7 +65,7 @@ export default function EnrollmentsPage() {
     }
     setEnrollments(enrollmentMap);
     setLoading(false);
-  };
+  }, [courses, currentUser]);
 
   useEffect(() => {
     if (currentUser) {
@@ -79,7 +79,7 @@ export default function EnrollmentsPage() {
     } else if (courses.length > 0) {
       setLoading(false);
     }
-  }, [courses, currentUser]);
+  }, [courses, currentUser, checkEnrollments]);
 
   const handleEnrollmentChange = async (courseId: string) => {
     // Refresh enrollment status for the specific course

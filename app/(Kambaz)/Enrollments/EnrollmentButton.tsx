@@ -19,13 +19,13 @@ export default function EnrollmentButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Only show enrollment button for students
-  if (currentUserRole !== "STUDENT") {
-    return null;
-  }
-
   // Check enrollment status on mount
   useEffect(() => {
+    // Only check enrollment if user is a student
+    if (currentUserRole !== "STUDENT") {
+      return;
+    }
+    
     const checkEnrollment = async () => {
       try {
         const enrollment = await client.findEnrollment(courseId);
@@ -36,7 +36,12 @@ export default function EnrollmentButton({
       }
     };
     checkEnrollment();
-  }, [courseId]);
+  }, [courseId, currentUserRole]);
+
+  // Only show enrollment button for students
+  if (currentUserRole !== "STUDENT") {
+    return null;
+  }
 
   const handleEnroll = async () => {
     setLoading(true);

@@ -49,7 +49,8 @@ export default function Dashboard() {
       setErrorMessage(null);
       
       // Remove _id before creating - backend will generate a new one
-      const { _id: _, ...courseData } = course;
+      const courseData = { ...course };
+      delete courseData._id;
       await client.createCourse(courseData);
       // Refresh the course list to get the updated list from the server
       await fetchCourses();

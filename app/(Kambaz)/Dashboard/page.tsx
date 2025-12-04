@@ -30,10 +30,17 @@ export default function Dashboard() {
   
   const fetchCourses = async () => {
     try {
-      const allCourses = await client.fetchAllCourses();
-      dispatch(setCourses(allCourses || []));
-    } catch {
-      console.error("Error fetching courses");
+      if (currentUser?.role === "STUDENT") {
+        // Students see their enrolled courses
+        const enrolledCourses = await client.findMyCourses();
+        dispatch(setCourses(enrolledCourses || []));
+      } else {
+        // Faculty and others see all courses
+        const allCourses = await client.fetchAllCourses();
+        dispatch(setCourses(allCourses || []));
+      }
+    } catch (error) {
+      console.error("Error fetching courses:", error);
       dispatch(setCourses([]));
     }
   };
@@ -106,7 +113,7 @@ export default function Dashboard() {
       fetchCourses();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser]);
+  }, [currentUser?._id, currentUser?.role]);
 
   const [course, setCourse] = useState<Course>({
     _id: "0", name: "New Course", number: "New Number",
@@ -147,7 +154,9 @@ export default function Dashboard() {
       )}
 
 
-      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
+      <h2 id="wd-dashboard-published">
+        {currentUser?.role === "STUDENT" ? "My Enrolled Courses" : "Published Courses"} ({courses.length})
+      </h2> <hr />
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
           {courses.map((course) => (
@@ -185,14 +194,6 @@ export default function Dashboard() {
 
                   </CardBody>
                 </Link>
-                {currentUser?.role === "STUDENT" && (
-                  <div className="p-2">
-                    <EnrollmentButton
-                      courseId={course._id}
-                      currentUserRole={currentUser.role}
-                    />
-                  </div>
-                )}
               </Card>
             </Col>
           ))}

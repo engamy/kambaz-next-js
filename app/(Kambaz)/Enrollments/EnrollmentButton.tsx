@@ -20,7 +20,7 @@ export default function EnrollmentButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Check enrollment status on mount (only for students)
+  // Check enrollment status on mount and when courseId changes
   useEffect(() => {
     if (currentUserRole !== "STUDENT") {
       return;
@@ -32,10 +32,21 @@ export default function EnrollmentButton({
       } catch (err) {
         // 404 is expected when not enrolled, so we don't log it as an error
         const error = err as { response?: { status?: number } };
-        if (error.response?.status !== 404) {
+        if (error.response?.status === 404) {
+          setIsEnrolled(false);
+        } else {
           console.error("Error checking enrollment:", err);
+          // On error, try to check via my courses as fallback
+          try {
+            const myCourses = await coursesClient.findMyCourses();
+            const isEnrolledInMyCourses = Array.isArray(myCourses) && 
+              myCourses.some((c: { _id?: string }) => c._id === courseId);
+            setIsEnrolled(isEnrolledInMyCourses);
+          } catch (fallbackError) {
+            console.error("Fallback enrollment check failed:", fallbackError);
+            setIsEnrolled(false);
+          }
         }
-        setIsEnrolled(false);
       }
     };
     checkEnrollment();
@@ -57,6 +68,25 @@ export default function EnrollmentButton({
       }
     } catch (err) {
       const error = err as { response?: { status?: number; data?: { message?: string } }; message?: string };
+      
+      // If enrollment fails, check if we're already enrolled (might be a duplicate)
+      if (error.response?.status === 400 || error.response?.status === 409 || error.response?.status === 500) {
+        try {
+          // Re-check enrollment status
+          const enrollment = await enrollmentsClient.findEnrollment(courseId);
+          if (enrollment !== null) {
+            // We're already enrolled, update UI accordingly
+            setIsEnrolled(true);
+            if (onEnrollmentChange) {
+              onEnrollmentChange();
+            }
+            return; // Don't show error if we're already enrolled
+          }
+        } catch (checkError) {
+          // If check fails, continue to show error
+        }
+      }
+      
       const errorMessage = error.response?.data?.message || error.message || "Failed to enroll in course";
       setError(errorMessage);
       console.error("Error enrolling in course:", err);

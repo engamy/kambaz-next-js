@@ -75,16 +75,47 @@ export default function Profile() {
       }
       
       // Ensure profile has _id before updating
-      const profileToUpdate = { ...profile, _id: userId };
+      // Remove password and _id from update if password is empty or _id is not needed in body
+      const { password, _id, id, ...profileWithoutPassword } = profile;
+      const profileToUpdate = { 
+        ...profileWithoutPassword, 
+        ...(password && password.trim() !== "" ? { password } : {})
+      };
       
       const updatedProfile = await client.updateUser(profileToUpdate);
+      
+      // Log the response for debugging
+      console.log("Update profile response:", updatedProfile);
+      console.log("Response type:", typeof updatedProfile);
+      console.log("Has _id:", updatedProfile?._id);
+      console.log("Has id:", updatedProfile?.id);
       
       // Only update if we got a valid user response (has _id or id)
       if (updatedProfile && typeof updatedProfile === 'object' && (updatedProfile._id || updatedProfile.id)) {
         dispatch(setCurrentUser(updatedProfile));
         setProfile(updatedProfile);
+      } else if (updatedProfile === null || updatedProfile === undefined) {
+        // Server returned null - try to refetch profile
+        console.warn("Server returned null, attempting to refetch profile");
+        try {
+          const refreshedProfile = await client.profile();
+          console.log("Refetched profile:", refreshedProfile);
+          if (refreshedProfile && (refreshedProfile._id || refreshedProfile.id)) {
+            dispatch(setCurrentUser(refreshedProfile));
+            setProfile(refreshedProfile);
+          } else {
+            setErrorMessage("Profile update may have succeeded, but could not verify. Please refresh the page.");
+          }
+        } catch (refreshError) {
+          console.error("Failed to refetch profile:", refreshError);
+          setErrorMessage("Profile update may have succeeded, but could not verify. Please refresh the page.");
+        }
       } else {
-        setErrorMessage("Failed to update profile. Invalid response from server. Please try again.");
+        // If update failed but we have a currentUser, keep it and show error
+        console.error("Invalid profile update response:", updatedProfile);
+        const errorMsg = updatedProfile?.message || 
+          `Failed to update profile. Server returned: ${JSON.stringify(updatedProfile)}`;
+        setErrorMessage(errorMsg);
       }
     } catch (error) {
       const axiosError = error as AxiosError;

@@ -205,7 +205,7 @@ export default function Dashboard() {
                   <div className="p-2">
                     <EnrollmentButton
                       courseId={course._id}
-                      currentUserRole={currentUser.role}
+                      currentUserRole={currentUser?.role}
                     />
                   </div>
                 )}

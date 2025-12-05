@@ -111,7 +111,7 @@ export default function EnrollmentsPage() {
     );
   }
 
-  if (currentUser.role !== "STUDENT") {
+  if (currentUser?.role !== "STUDENT") {
     return (
       <div id="wd-enrollments">
         <h1>Enrollments</h1>
@@ -172,7 +172,7 @@ export default function EnrollmentsPage() {
                   <div className="p-2">
                     <EnrollmentButton
                       courseId={course._id}
-                      currentUserRole={currentUser.role}
+                      currentUserRole={currentUser?.role}
                       onEnrollmentChange={() => handleEnrollmentChange(course._id)}
                     />
                   </div>

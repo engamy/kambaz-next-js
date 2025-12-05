@@ -78,8 +78,14 @@ export default function Profile() {
       const profileToUpdate = { ...profile, _id: userId };
       
       const updatedProfile = await client.updateUser(profileToUpdate);
-      dispatch(setCurrentUser(updatedProfile));
-      setProfile(updatedProfile);
+      
+      // Only update if we got a valid user response (has _id or id)
+      if (updatedProfile && typeof updatedProfile === 'object' && (updatedProfile._id || updatedProfile.id)) {
+        dispatch(setCurrentUser(updatedProfile));
+        setProfile(updatedProfile);
+      } else {
+        setErrorMessage("Failed to update profile. Invalid response from server. Please try again.");
+      }
     } catch (error) {
       const axiosError = error as AxiosError;
       console.error("Update profile failed:", axiosError);

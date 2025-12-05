@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { modules } from "../../../Database";
 import { v4 as uuidv4 } from "uuid";
 
 interface Lesson {
@@ -25,7 +24,7 @@ interface ModuleInput {
 }
 
 const initialState = {
-  modules: modules as Module[],
+  modules: [] as Module[],
 };
 
 const modulesSlice = createSlice({

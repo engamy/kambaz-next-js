@@ -83,13 +83,20 @@ export default function Modules() {
   }
 
   const fetchModules = async () => {
-    const fetchedModules = await client.findModulesForCourse(cid as string);
-    dispatch(setModules(fetchedModules));
+    if (!cid) return;
+    const courseId = Array.isArray(cid) ? cid[0] : cid;
+    try {
+      const fetchedModules = await client.findModulesForCourse(courseId);
+      dispatch(setModules(fetchedModules || []));
+    } catch (error) {
+      console.error("Error fetching modules:", error);
+      // Don't clear modules on error, just log it
+    }
   };
   useEffect(() => {
     fetchModules();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cid]);
   
   return (
     <div className="wd-modules">

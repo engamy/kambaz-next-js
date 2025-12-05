@@ -1,4 +1,4 @@
-const assignments = [
+[
   { 
     "_id": "A101", 
     "title": "A1", 
@@ -215,6 +215,5 @@ const assignments = [
     "untilDate": "",
     "untilTime": ""
   }
-];
+]
 
-export default assignments;

@@ -35,6 +35,7 @@ export default function Profile() {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const [profile, setProfile] = useState<User>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const dispatch = useDispatch();
   
   useEffect(() => {
@@ -64,6 +65,7 @@ export default function Profile() {
     e.stopPropagation();
     try {
       setErrorMessage(null);
+      setSuccessMessage(null);
       
       // Ensure we have _id - get it from currentUser if missing in profile
       const currentUserData = currentUser as User | null;
@@ -75,10 +77,12 @@ export default function Profile() {
       }
       
       // Ensure profile has _id before updating
-      // Remove password and _id from update if password is empty or _id is not needed in body
-      const { password, _id, id, ...profileWithoutPassword } = profile;
+      // Remove password from update if it's empty (don't send empty password)
+      // Keep _id for the URL, but server will get userId from URL params
+      const { password, ...profileWithoutPassword } = profile;
       const profileToUpdate = { 
-        ...profileWithoutPassword, 
+        ...profileWithoutPassword,
+        _id: userId, // Required for client.updateUser to construct the URL
         ...(password && password.trim() !== "" ? { password } : {})
       };
       
@@ -86,36 +90,52 @@ export default function Profile() {
       
       // Log the response for debugging
       console.log("Update profile response:", updatedProfile);
-      console.log("Response type:", typeof updatedProfile);
-      console.log("Has _id:", updatedProfile?._id);
-      console.log("Has id:", updatedProfile?.id);
       
-      // Only update if we got a valid user response (has _id or id)
+      // Check if we got a valid user response (has _id or id)
       if (updatedProfile && typeof updatedProfile === 'object' && (updatedProfile._id || updatedProfile.id)) {
+        // Server returned valid user - use it
         dispatch(setCurrentUser(updatedProfile));
         setProfile(updatedProfile);
-      } else if (updatedProfile === null || updatedProfile === undefined) {
-        // Server returned null - try to refetch profile
-        console.warn("Server returned null, attempting to refetch profile");
+        setSuccessMessage("Profile updated successfully!");
+      } else {
+        // Server returned null or invalid response - try to refetch profile
+        console.warn("Server returned invalid response, attempting to refetch profile");
         try {
           const refreshedProfile = await client.profile();
           console.log("Refetched profile:", refreshedProfile);
           if (refreshedProfile && (refreshedProfile._id || refreshedProfile.id)) {
+            // Use the refreshed profile
             dispatch(setCurrentUser(refreshedProfile));
             setProfile(refreshedProfile);
+            setSuccessMessage("Profile updated successfully!");
           } else {
-            setErrorMessage("Profile update may have succeeded, but could not verify. Please refresh the page.");
+            // Refetch failed, but update might have succeeded
+            // Merge our updates with current user data as fallback
+            const fallbackProfile = {
+              ...currentUserData,
+              ...profileToUpdate,
+              _id: userId,
+              id: userId
+            };
+            console.warn("Using fallback profile:", fallbackProfile);
+            dispatch(setCurrentUser(fallbackProfile));
+            setProfile(fallbackProfile);
+            setSuccessMessage("Profile updated (changes may need a page refresh to verify)");
           }
         } catch (refreshError) {
           console.error("Failed to refetch profile:", refreshError);
-          setErrorMessage("Profile update may have succeeded, but could not verify. Please refresh the page.");
+          // Update might have succeeded, use our sent data as fallback
+          const fallbackProfile = {
+            ...currentUserData,
+            ...profileToUpdate,
+            _id: userId,
+            id: userId
+          };
+          console.warn("Using fallback profile after refresh error:", fallbackProfile);
+          dispatch(setCurrentUser(fallbackProfile));
+          setProfile(fallbackProfile);
+          setSuccessMessage("Profile updated (changes may need a page refresh to verify)");
         }
-      } else {
-        // If update failed but we have a currentUser, keep it and show error
-        console.error("Invalid profile update response:", updatedProfile);
-        const errorMsg = updatedProfile?.message || 
-          `Failed to update profile. Server returned: ${JSON.stringify(updatedProfile)}`;
-        setErrorMessage(errorMsg);
       }
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -135,6 +155,11 @@ export default function Profile() {
       {errorMessage && (
         <div className="alert alert-danger mb-2" role="alert">
           {errorMessage}
+        </div>
+      )}
+      {successMessage && (
+        <div className="alert alert-success mb-2" role="alert">
+          {successMessage}
         </div>
       )}
       

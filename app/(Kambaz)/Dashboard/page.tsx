@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCourses } from "../Courses/reducer";
 import { RootState } from "../store";
 import * as client from "../Courses/client";
-import EnrollmentButton from "../Enrollments/EnrollmentButton";
 
 
 interface Course {

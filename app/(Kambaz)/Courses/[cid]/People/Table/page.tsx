@@ -16,6 +16,12 @@ interface User {
   totalActivity: string;
 }
 
+interface Enrollment {
+  _id: string;
+  user: string;
+  course: string;
+}
+
 export default function PeopleTable() {
   const { cid } = useParams();
   const { users, enrollments } = db;
@@ -29,7 +35,7 @@ export default function PeopleTable() {
         <tbody>
           {users
             .filter((usr: User) =>
-              enrollments.some((enrollment) => enrollment.user === usr._id && enrollment.course === cid)
+              enrollments.some((enrollment: Enrollment) => enrollment.user === usr._id && enrollment.course === cid)
             )
             .map((user: User) => (
               <tr key={user._id}>

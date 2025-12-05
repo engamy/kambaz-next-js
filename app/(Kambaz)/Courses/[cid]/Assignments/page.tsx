@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 import { FaEllipsisV, FaPlus, FaSearch, FaCheckCircle, FaFileAlt, FaChevronDown, FaTrash } from "react-icons/fa";
 import * as client from "./client";
 import DeleteAssignmentModal from "./DeleteAssignmentModal";
@@ -38,6 +40,8 @@ export default function Assignments() {
     const [assignments, setAssignments] = useState<Assignment[]>([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment | null>(null);
+    const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+    const canEdit = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
 
     useEffect(() => {
         const fetchAssignments = async () => {
@@ -116,21 +120,23 @@ export default function Assignments() {
                 style={{ borderRadius: '6px', border: '1px solid #dee2e6' }}
               />
             </div>
-            <div className="d-flex gap-2">
-              <button className="btn btn-light border" id="wd-add-assignment-group">
-                <FaPlus className="me-1" />Group
-              </button>
-              <button 
-                type="button"
-                className="btn btn-danger" 
-                id="wd-add-assignment"
-                onClick={() => {
-                  router.push(`/Courses/${courseId}/Assignments/new`);
-                }}
-              >
-                <FaPlus className="me-1" />Assignment
-              </button>
-            </div>
+            {canEdit && (
+              <div className="d-flex gap-2">
+                <button className="btn btn-light border" id="wd-add-assignment-group">
+                  <FaPlus className="me-1" />Group
+                </button>
+                <button 
+                  type="button"
+                  className="btn btn-danger" 
+                  id="wd-add-assignment"
+                  onClick={() => {
+                    router.push(`/Courses/${courseId}/Assignments/new`);
+                  }}
+                >
+                  <FaPlus className="me-1" />Assignment
+                </button>
+              </div>
+            )}
           </div>
 
           {Object.entries(groupedAssignments).map(([groupName, groupAssignments]) => (
@@ -181,11 +187,13 @@ export default function Assignments() {
                       </div>
                       <div className="d-flex align-items-center gap-2">
                         <FaCheckCircle className="text-success" />
-                        <FaTrash
-                          className="text-danger"
-                          style={{ cursor: "pointer" }}
-                          onClick={() => handleDeleteClick(assignment)}
-                        />
+                        {canEdit && (
+                          <FaTrash
+                            className="text-danger"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleDeleteClick(assignment)}
+                          />
+                        )}
                         <FaEllipsisV className="text-secondary" />
                       </div>
                     </div>

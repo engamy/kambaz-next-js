@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button, Row, Col, Container } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 import * as client from "./client";
 
 interface Assignment {
@@ -37,8 +39,18 @@ export default function AssignmentEditor() {
   const courseId = params.cid as string;
   const assignmentId = params.aid as string | undefined;
   const [assignment, setAssignment] = useState<Assignment | null>(null);
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
 
   const isEditing = !!assignmentId;
+  const isStudent = currentUser?.role === "STUDENT";
+  const canEdit = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
+
+  // Redirect students away from creating new assignments
+  useEffect(() => {
+    if (!isEditing && isStudent) {
+      router.push(`/Courses/${courseId}/Assignments`);
+    }
+  }, [isEditing, isStudent, courseId, router]);
 
   useEffect(() => {
     const fetchAssignment = async () => {
@@ -80,6 +92,11 @@ export default function AssignmentEditor() {
   }, [assignment]);
 
   const handleSave = async () => {
+    if (!canEdit) {
+      alert("You do not have permission to edit assignments.");
+      return;
+    }
+
     if (!name.trim()) {
       alert("Please enter an assignment name");
       return;
@@ -159,7 +176,12 @@ export default function AssignmentEditor() {
   return (
     <Container className="mt-4">
       <div id="wd-assignments-editor" className="mr-5">
-        <h2 className="mb-4">{isEditing ? assignment?.name || "Edit Assignment" : "New Assignment"}</h2>
+        <h2 className="mb-4">{isEditing ? assignment?.name || "View Assignment" : "New Assignment"}</h2>
+        {isStudent && isEditing && (
+          <div className="alert alert-info mb-3">
+            You are viewing this assignment in read-only mode. Only faculty and admins can edit assignments.
+          </div>
+        )}
         <form>
           <div className="mb-3">
             <label htmlFor="wd-name" className="form-label">
@@ -172,6 +194,8 @@ export default function AssignmentEditor() {
               className="form-control border-secondary"
               type="text"
               placeholder="Enter assignment name"
+              disabled={isStudent}
+              readOnly={isStudent}
             />
           </div>
 
@@ -186,6 +210,8 @@ export default function AssignmentEditor() {
               className="form-control border-secondary"
               rows={8}
               placeholder="Enter assignment description"
+              disabled={isStudent}
+              readOnly={isStudent}
             />
           </div>
 
@@ -202,6 +228,8 @@ export default function AssignmentEditor() {
                 onChange={(e) => setPoints(parseInt(e.target.value) || 0)}
                 type="number"
                 className="form-control text-end border-secondary"
+                disabled={isStudent}
+                readOnly={isStudent}
               />
             </Col>
           </Row>
@@ -219,6 +247,8 @@ export default function AssignmentEditor() {
                 onChange={(e) => setDueDate(e.target.value)}
                 type="date"
                 className="form-control border-secondary"
+                disabled={isStudent}
+                readOnly={isStudent}
               />
             </Col>
             <Col md={2}>
@@ -228,6 +258,8 @@ export default function AssignmentEditor() {
                 onChange={(e) => setDueTime(e.target.value)}
                 type="time"
                 className="form-control border-secondary"
+                disabled={isStudent}
+                readOnly={isStudent}
               />
             </Col>
           </Row>
@@ -245,6 +277,8 @@ export default function AssignmentEditor() {
                 onChange={(e) => setAvailableFromDate(e.target.value)}
                 type="date"
                 className="form-control border-secondary"
+                disabled={isStudent}
+                readOnly={isStudent}
               />
             </Col>
             <Col md={2}>
@@ -254,6 +288,8 @@ export default function AssignmentEditor() {
                 onChange={(e) => setAvailableFromTime(e.target.value)}
                 type="time"
                 className="form-control border-secondary"
+                disabled={isStudent}
+                readOnly={isStudent}
               />
             </Col>
           </Row>
@@ -271,6 +307,8 @@ export default function AssignmentEditor() {
                 onChange={(e) => setUntilDate(e.target.value)}
                 type="date"
                 className="form-control border-secondary"
+                disabled={isStudent}
+                readOnly={isStudent}
               />
             </Col>
             <Col md={2}>
@@ -280,17 +318,21 @@ export default function AssignmentEditor() {
                 onChange={(e) => setUntilTime(e.target.value)}
                 type="time"
                 className="form-control border-secondary"
+                disabled={isStudent}
+                readOnly={isStudent}
               />
             </Col>
           </Row>
 
           <div className="d-flex justify-content-end gap-2">
             <Button variant="outline-secondary" className="px-4" onClick={handleCancel}>
-              Cancel
+              {isStudent ? "Back" : "Cancel"}
             </Button>
-            <Button variant="danger" className="px-4" onClick={handleSave}>
-              Save
-            </Button>
+            {canEdit && (
+              <Button variant="danger" className="px-4" onClick={handleSave}>
+                Save
+              </Button>
+            )}
           </div>
         </form>
       </div>

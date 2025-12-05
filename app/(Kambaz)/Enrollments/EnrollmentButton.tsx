@@ -29,7 +29,11 @@ export default function EnrollmentButton({
         const enrollment = await client.findEnrollment(courseId);
         setIsEnrolled(enrollment !== null);
       } catch (err) {
-        console.error("Error checking enrollment:", err);
+        // 404 is expected when not enrolled, so we don't log it as an error
+        const error = err as { response?: { status?: number } };
+        if (error.response?.status !== 404) {
+          console.error("Error checking enrollment:", err);
+        }
         setIsEnrolled(false);
       }
     };

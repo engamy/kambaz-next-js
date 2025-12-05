@@ -70,7 +70,7 @@ export const fetchAllCourses = async () => {
 
 export const findMyCourses = async () => {
   try {
-    const { data } = await axiosApiProxy.get(`/api/users/current/courses`);
+    const { data } = await axiosWithCredentials.get(`/api/users/current/courses`);
     return data;
   } catch (error) {
     const axiosError = error as AxiosError;
@@ -82,7 +82,7 @@ export const findMyCourses = async () => {
 };
 
 export const createCourse = async (course: Course) => {
-  const { data } = await axiosApiProxy.post(`/api/users/current/courses`, course);
+  const { data } = await axiosWithCredentials.post(`/api/users/current/courses`, course);
   return data;
 };
 

@@ -54,8 +54,7 @@ export default function Dashboard() {
     try {
       setErrorMessage(null);
       
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { _id, ...courseData } = course;
+      const { _id: _unused, ...courseData } = course;
       await client.createCourse(courseData);
       await fetchCourses();
       setCourse({

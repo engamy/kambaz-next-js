@@ -104,12 +104,18 @@ export const updateCourse = async (course: Course) => {
   }
 };
 
-export const deleteModule = async (moduleId: string) => {
-  const { data } = await axiosWithCredentials.delete(`/api/modules/${moduleId}`);
-  return data;
-};
+export const deleteModule = async (courseId: string, moduleId: string) => {
+  const response = await axios.delete(
+    `${COURSES_API}/${courseId}/modules/${moduleId}`
+  );
+  return response.data;
+ };
 
-export const updateModule = async (module: Module) => {
-  const { data } = await axiosWithCredentials.put(`/api/modules/${module._id}`, module);
+ export const updateModule = async (courseId: string, module: any) => {
+  const { data } = await axios.put(
+    `${COURSES_API}/${courseId}/modules/${module._id}`,
+    module
+  );
   return data;
-};
+ };
+ 

@@ -48,14 +48,30 @@ export default function Modules() {
   const dispatch = useDispatch();
 
   const onUpdateModule = async (module: Module) => {
-    await client.updateModule(module);
-    const newModules = modules.map((m: Module) => m._id === module._id ? module : m );
-    dispatch(setModules(newModules));
+    if (!cid) return;
+    const courseId = Array.isArray(cid) ? cid[0] : cid;
+    try {
+      await client.updateModule(courseId, module);
+      const newModules = modules.map((m: Module) => m._id === module._id ? module : m);
+      dispatch(setModules(newModules));
+    } catch (error) {
+      console.error("Error updating module:", error);
+      // Refresh modules on error
+      await fetchModules();
+    }
   };
 
   const onRemoveModule = async (moduleId: string) => {
-    await client.deleteModule(moduleId);
-    dispatch(setModules(modules.filter((m: Module) => m._id !== moduleId)));
+    if (!cid) return;
+    const courseId = Array.isArray(cid) ? cid[0] : cid;
+    try {
+      await client.deleteModule(courseId, moduleId);
+      dispatch(setModules(modules.filter((m: Module) => m._id !== moduleId)));
+    } catch (error) {
+      console.error("Error deleting module:", error);
+      // Refresh modules on error
+      await fetchModules();
+    }
   };
 
   const onCreateModuleForCourse = async () => {
@@ -92,9 +108,14 @@ export default function Modules() {
                     className="w-50 d-inline-block" 
                     value={module.name}
                     onChange={(e) => dispatch(updateModule({ ...module, name: e.target.value }))}
-                    onKeyDown={(e) => {
+                    onKeyDown={async (e) => {
                       if (e.key === "Enter") {
-                        onUpdateModule({ ...module, editing: false });
+                        e.preventDefault();
+                        // Get the current module from Redux state to ensure we have the latest name
+                        const currentModule = modules.find((m: Module) => m._id === module._id);
+                        if (currentModule) {
+                          await onUpdateModule({ ...currentModule, editing: false });
+                        }
                       }
                     }}
                   />

@@ -97,12 +97,12 @@ export const updateCourse = async (course: Course) => {
   }
 };
 
-export const deleteModule = async (moduleId: string) => {
-  const { data } = await axiosWithCredentials.delete(`/api/modules/${moduleId}`);
+export const deleteModule = async (courseId: string, moduleId: string) => {
+  const { data } = await axiosWithCredentials.delete(`/api/courses/${courseId}/modules/${moduleId}`);
   return data;
 };
 
-export const updateModule = async (module: Module) => {
-  const { data } = await axiosWithCredentials.put(`/api/modules/${module._id}`, module);
+export const updateModule = async (courseId: string, module: Module) => {
+  const { data } = await axiosWithCredentials.put(`/api/courses/${courseId}/modules/${module._id}`, module);
   return data;
 };

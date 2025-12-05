@@ -188,21 +188,23 @@ export default function Dashboard() {
         <h2 id="wd-dashboard-published" className="mb-0">
           {viewMode === "all" ? "Published Courses" : "My Courses"} ({courses.length})
         </h2>
-        <div>
-          <Button
-            variant={viewMode === "all" ? "primary" : "outline-primary"}
-            onClick={() => handleViewModeChange("all")}
-            className="me-2"
-          >
-            All Courses
-          </Button>
-          <Button
-            variant={viewMode === "my" ? "primary" : "outline-primary"}
-            onClick={() => handleViewModeChange("my")}
-          >
-            My Courses
-          </Button>
-        </div>
+        {currentUser?.role === "STUDENT" && (
+          <div>
+            <Button
+              variant={viewMode === "all" ? "primary" : "outline-primary"}
+              onClick={() => handleViewModeChange("all")}
+              className="me-2"
+            >
+              All Courses
+            </Button>
+            <Button
+              variant={viewMode === "my" ? "primary" : "outline-primary"}
+              onClick={() => handleViewModeChange("my")}
+            >
+              My Courses
+            </Button>
+          </div>
+        )}
       </div>
       <hr />
       {courses.length === 0 && (

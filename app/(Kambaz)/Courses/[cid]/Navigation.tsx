@@ -11,9 +11,6 @@ export default function CourseNavigation({ cid }: CourseNavigationProps) {
   const links = ["Home", "Modules", "Piazza", "Zoom", "Assignments", "Quizzes", "Grades", "People"];
 
   const getLinkHref = (link: string) => {
-    if (link === "People") {
-      return `/Courses/${cid}/People/Table`;
-    }
     return `/Courses/${cid}/${link}`;
   };
 

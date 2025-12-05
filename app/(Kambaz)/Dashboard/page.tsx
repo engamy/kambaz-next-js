@@ -27,6 +27,8 @@ export default function Dashboard() {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"all" | "my">("all");
+  const [enrolledCourseIds, setEnrolledCourseIds] = useState<Set<string>>(new Set());
   
   const fetchCourses = async () => {
     try {
@@ -41,6 +43,36 @@ export default function Dashboard() {
       console.error("Error fetching courses:", error);
       setErrorMessage("Failed to load courses. Please refresh the page.");
       dispatch(setCourses([]));
+    }
+  };
+
+  const fetchMyCourses = async () => {
+    try {
+      const myCourses = await client.findMyCourses();
+      if (Array.isArray(myCourses)) {
+        dispatch(setCourses(myCourses));
+        // Track enrolled course IDs
+        const enrolledIds = new Set(myCourses.map((c: Course) => c._id));
+        setEnrolledCourseIds(enrolledIds);
+      } else {
+        console.error("My courses data is not an array:", myCourses);
+        dispatch(setCourses([]));
+        setEnrolledCourseIds(new Set());
+      }
+    } catch (error) {
+      console.error("Error fetching my courses:", error);
+      setErrorMessage("Failed to load my courses. Please refresh the page.");
+      dispatch(setCourses([]));
+      setEnrolledCourseIds(new Set());
+    }
+  };
+
+  const handleViewModeChange = (mode: "all" | "my") => {
+    setViewMode(mode);
+    if (mode === "all") {
+      fetchCourses();
+    } else {
+      fetchMyCourses();
     }
   };
 
@@ -105,7 +137,11 @@ export default function Dashboard() {
 
 
   useEffect(() => {
-    fetchCourses();
+    if (viewMode === "all") {
+      fetchCourses();
+    } else {
+      fetchMyCourses();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -148,7 +184,27 @@ export default function Dashboard() {
       )}
 
 
-      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2 id="wd-dashboard-published" className="mb-0">
+          {viewMode === "all" ? "Published Courses" : "My Courses"} ({courses.length})
+        </h2>
+        <div>
+          <Button
+            variant={viewMode === "all" ? "primary" : "outline-primary"}
+            onClick={() => handleViewModeChange("all")}
+            className="me-2"
+          >
+            All Courses
+          </Button>
+          <Button
+            variant={viewMode === "my" ? "primary" : "outline-primary"}
+            onClick={() => handleViewModeChange("my")}
+          >
+            My Courses
+          </Button>
+        </div>
+      </div>
+      <hr />
       {courses.length === 0 && (
         <div className="alert alert-info" role="alert">
           No courses available. {currentUser?.role === "FACULTY" && "Create a new course to get started."}
@@ -201,11 +257,23 @@ export default function Dashboard() {
 
                   </CardBody>
                 </Link>
-                {currentUser?.role === "STUDENT" && (
+                {currentUser?.role === "STUDENT" && viewMode === "all" && (
                   <div className="p-2">
                     <EnrollmentButton
                       courseId={course._id}
                       currentUserRole={currentUser?.role}
+                      onEnrollmentChange={async () => {
+                        // Refresh enrolled course IDs when enrollment changes
+                        try {
+                          const myCourses = await client.findMyCourses();
+                          if (Array.isArray(myCourses)) {
+                            const enrolledIds = new Set(myCourses.map((c: Course) => c._id));
+                            setEnrolledCourseIds(enrolledIds);
+                          }
+                        } catch (error) {
+                          console.error("Error refreshing enrolled courses:", error);
+                        }
+                      }}
                     />
                   </div>
                 )}

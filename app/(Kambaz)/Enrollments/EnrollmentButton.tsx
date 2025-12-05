@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
-import * as client from "./client";
+import * as enrollmentsClient from "./client";
+import * as coursesClient from "../Courses/client";
 
 interface EnrollmentButtonProps {
   courseId: string;
@@ -26,7 +27,7 @@ export default function EnrollmentButton({
     }
     const checkEnrollment = async () => {
       try {
-        const enrollment = await client.findEnrollment(courseId);
+        const enrollment = await enrollmentsClient.findEnrollment(courseId);
         setIsEnrolled(enrollment !== null);
       } catch (err) {
         // 404 is expected when not enrolled, so we don't log it as an error
@@ -49,7 +50,7 @@ export default function EnrollmentButton({
     setLoading(true);
     setError(null);
     try {
-      await client.enrollInCourse(courseId);
+      await coursesClient.enrollIntoCourse(courseId);
       setIsEnrolled(true);
       if (onEnrollmentChange) {
         onEnrollmentChange();
@@ -68,7 +69,7 @@ export default function EnrollmentButton({
     setLoading(true);
     setError(null);
     try {
-      await client.unenrollFromCourse(courseId);
+      await coursesClient.unenrollFromCourse(courseId);
       setIsEnrolled(false);
       if (onEnrollmentChange) {
         onEnrollmentChange();

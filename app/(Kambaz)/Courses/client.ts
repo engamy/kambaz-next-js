@@ -119,3 +119,13 @@ export const updateModule = async (courseId: string, module: Module) => {
   return data;
 };
  
+export const enrollIntoCourse = async (courseId: string) => {
+  const response = await axiosWithCredentials.post(`${USERS_API}/current/courses/${courseId}`);
+  return response.data;
+};
+
+export const unenrollFromCourse = async (courseId: string) => {
+  const response = await axiosWithCredentials.delete(`${USERS_API}/current/courses/${courseId}`);
+  return response.data;
+};
+ 

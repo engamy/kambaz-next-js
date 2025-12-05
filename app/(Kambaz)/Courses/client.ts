@@ -111,11 +111,11 @@ export const deleteModule = async (courseId: string, moduleId: string) => {
   return response.data;
  };
 
- export const updateModule = async (courseId: string, module: any) => {
+export const updateModule = async (courseId: string, module: Module) => {
   const { data } = await axios.put(
     `${COURSES_API}/${courseId}/modules/${module._id}`,
     module
   );
   return data;
- };
+};
  

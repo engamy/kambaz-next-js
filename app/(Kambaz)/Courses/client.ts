@@ -105,11 +105,11 @@ export const updateCourse = async (course: Course) => {
 };
 
 export const deleteModule = async (courseId: string, moduleId: string) => {
-  const response = await axios.delete(
-    `${COURSES_API}/${courseId}/modules/${moduleId}`
+  const response = await axiosWithCredentials.delete(
+    `/api/courses/${courseId}/modules/${moduleId}`
   );
   return response.data;
- };
+};
 
 export const updateModule = async (courseId: string, module: Module) => {
   const { data } = await axios.put(

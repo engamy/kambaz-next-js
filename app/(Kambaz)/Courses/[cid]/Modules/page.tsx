@@ -54,8 +54,15 @@ export default function Modules() {
   };
 
   const onRemoveModule = async (moduleId: string) => {
-    await client.deleteModule(cid as string, moduleId);
-    dispatch(setModules(modules.filter((m: Module) => m._id !== moduleId)));
+    try {
+      await client.deleteModule(cid as string, moduleId);
+      // Filter out the deleted module from the current modules
+      dispatch(setModules(modules.filter((m: Module) => m._id !== moduleId)));
+    } catch (error) {
+      console.error("Error deleting module:", error);
+      // Refresh modules from server on error to sync state
+      await fetchModules();
+    }
   };
  
 
@@ -93,9 +100,14 @@ export default function Modules() {
                     className="w-50 d-inline-block" 
                     value={module.name}
                     onChange={(e) => dispatch(updateModule({ ...module, name: e.target.value }))}
-                    onKeyDown={(e) => {
+                    onKeyDown={async (e) => {
                       if (e.key === "Enter") {
-                        onUpdateModule({ ...module, editing: false });
+                        e.preventDefault();
+                        // Get the current module from Redux state to ensure we have the latest name
+                        const currentModule = modules.find((m: Module) => m._id === module._id);
+                        if (currentModule) {
+                          await onUpdateModule({ ...currentModule, editing: false });
+                        }
                       }
                     }}
                   />

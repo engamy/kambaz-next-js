@@ -88,9 +88,6 @@ export default function Profile() {
       
       const updatedProfile = await client.updateUser(profileToUpdate);
       
-      // Log the response for debugging
-      console.log("Update profile response:", updatedProfile);
-      
       // Check if we got a valid user response (has _id or id)
       if (updatedProfile && typeof updatedProfile === 'object' && (updatedProfile._id || updatedProfile.id)) {
         // Server returned valid user - use it
@@ -102,7 +99,6 @@ export default function Profile() {
         console.warn("Server returned invalid response, attempting to refetch profile");
         try {
           const refreshedProfile = await client.profile();
-          console.log("Refetched profile:", refreshedProfile);
           if (refreshedProfile && (refreshedProfile._id || refreshedProfile.id)) {
             // Use the refreshed profile
             dispatch(setCurrentUser(refreshedProfile));

@@ -125,7 +125,6 @@ export default function Assignments() {
                 className="btn btn-danger" 
                 id="wd-add-assignment"
                 onClick={() => {
-                  console.log('Navigating to:', `/Courses/${courseId}/Assignments/new`);
                   router.push(`/Courses/${courseId}/Assignments/new`);
                 }}
               >

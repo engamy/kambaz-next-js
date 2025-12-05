@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import PeopleTable from "./Table";
-import * as client from "../client";
+import * as client from "../../client";
 
 export default function People() {
   interface User {

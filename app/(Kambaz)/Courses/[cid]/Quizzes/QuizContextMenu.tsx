@@ -16,7 +16,7 @@ interface QuizContextMenuProps {
 
 export default function QuizContextMenu({
   quizId,
-  quizName: _quizName,
+  quizName: _,
   published,
   onEdit,
   onDelete,

@@ -2,8 +2,6 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Button, Container, FormCheck, FormControl } from "react-bootstrap";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store";
 import { FaCheckCircle, FaQuestionCircle, FaTimes } from "react-icons/fa";
 import * as client from "./client";
 
@@ -259,8 +257,6 @@ export default function StudentQuiz() {
 
   // If student has exhausted attempts and viewing results
   if (!canTakeQuiz && submitted && latestAttempt) {
-    const currentQuestion = quiz.questions?.[currentQuestionIndex];
-
     return (
       <Container className="mt-4">
         <div id="wd-student-quiz">

@@ -54,6 +54,7 @@ export default function QuizDetails() {
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [latestAttempt, setLatestAttempt] = useState<QuizAttempt | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_allAttempts, setAllAttempts] = useState<QuizAttempt[]>([]);
   const [canTakeQuiz, setCanTakeQuiz] = useState(true);
 
@@ -160,7 +161,7 @@ export default function QuizDetails() {
               <h5>Last Attempt Results</h5>
               <p className="mb-1">
                 <strong>Score:</strong> {latestAttempt.score || 0} / {latestAttempt.totalPoints || 0}
-                {latestAttempt.totalPoints > 0 && (
+                {latestAttempt.totalPoints && latestAttempt.totalPoints > 0 && (
                   <span> ({Math.round(((latestAttempt.score || 0) / latestAttempt.totalPoints) * 100)}%)</span>
                 )}
               </p>

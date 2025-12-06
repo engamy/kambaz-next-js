@@ -65,7 +65,7 @@ export const findLatestAttemptForQuiz = async (quizId: string) => {
   try {
     const response = await axiosWithCredentials.get(`/api/quizzes/${quizId}/attempts/latest`);
     return response.data;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -74,7 +74,7 @@ export const findAttemptsForQuiz = async (quizId: string) => {
   try {
     const response = await axiosWithCredentials.get(`/api/quizzes/${quizId}/attempts`);
     return response.data;
-  } catch (error) {
+  } catch {
     return [];
   }
 };

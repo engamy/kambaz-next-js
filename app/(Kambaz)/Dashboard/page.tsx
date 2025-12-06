@@ -28,7 +28,7 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"all" | "my">("all");
-  const [enrolledCourseIds, setEnrolledCourseIds] = useState<Set<string>>(new Set());
+  const [, setEnrolledCourseIds] = useState<Set<string>>(new Set());
   
   const fetchCourses = async () => {
     try {

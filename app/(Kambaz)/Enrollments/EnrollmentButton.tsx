@@ -82,7 +82,7 @@ export default function EnrollmentButton({
             }
             return; // Don't show error if we're already enrolled
           }
-        } catch (checkError) {
+        } catch {
           // If check fails, continue to show error
         }
       }

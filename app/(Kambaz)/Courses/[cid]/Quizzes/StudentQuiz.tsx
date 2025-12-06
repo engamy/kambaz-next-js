@@ -53,7 +53,6 @@ export default function StudentQuiz() {
   const router = useRouter();
   const courseId = params.cid as string;
   const quizId = params.qid as string;
-  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -115,7 +114,7 @@ export default function StudentQuiz() {
               setAnswers(answerMap);
             }
           }
-        } catch (error) {
+        } catch {
           // Error fetching quiz
         }
       }
@@ -175,7 +174,7 @@ export default function StudentQuiz() {
       if (attempts.length > 0) {
         setLatestAttempt(attempts[0]);
       }
-    } catch (error) {
+    } catch {
       // Error saving attempt
     }
 
@@ -261,7 +260,6 @@ export default function StudentQuiz() {
   // If student has exhausted attempts and viewing results
   if (!canTakeQuiz && submitted && latestAttempt) {
     const currentQuestion = quiz.questions?.[currentQuestionIndex];
-    const questionId = currentQuestion?._id || "";
 
     return (
       <Container className="mt-4">

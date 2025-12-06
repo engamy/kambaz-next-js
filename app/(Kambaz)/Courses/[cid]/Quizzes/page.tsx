@@ -81,7 +81,7 @@ export default function Quizzes() {
             }
             setQuizScores(scores);
           }
-        } catch (error) {
+        } catch {
           // Error fetching quizzes
         }
       }
@@ -101,7 +101,7 @@ export default function Quizzes() {
         setQuizzes(quizzes.filter((q) => q._id !== quizToDelete._id));
         setQuizToDelete(null);
         setShowDeleteModal(false);
-      } catch (error) {
+      } catch {
         // Error deleting quiz
       }
     }
@@ -117,7 +117,7 @@ export default function Quizzes() {
       const updatedQuiz = { ...quiz, published: true };
       await client.updateQuiz(updatedQuiz);
       setQuizzes(quizzes.map((q) => (q._id === quiz._id ? { ...q, published: true } : q)));
-    } catch (error) {
+    } catch {
       // Error publishing quiz
     }
   };
@@ -127,7 +127,7 @@ export default function Quizzes() {
       const updatedQuiz = { ...quiz, published: false };
       await client.updateQuiz(updatedQuiz);
       setQuizzes(quizzes.map((q) => (q._id === quiz._id ? { ...q, published: false } : q)));
-    } catch (error) {
+    } catch {
       // Error unpublishing quiz
     }
   };
@@ -142,7 +142,7 @@ export default function Quizzes() {
         questions: [],
       });
       router.push(`/Courses/${courseId}/Quizzes/${newQuiz._id}/Edit`);
-    } catch (error) {
+    } catch {
       // Error creating quiz
     }
   };

@@ -61,7 +61,7 @@ export default function QuizPreview() {
             const total = fetchedQuiz.questions.reduce((sum: number, q: Question) => sum + (q.points || 0), 0);
             setTotalPoints(total);
           }
-        } catch (error) {
+        } catch {
           // Error fetching quiz
         }
       }

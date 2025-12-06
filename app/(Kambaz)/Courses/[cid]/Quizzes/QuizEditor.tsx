@@ -99,7 +99,7 @@ export default function QuizEditor() {
             setHowManyAttempts(1);
           }
           setQuestions(fetchedQuiz.questions || []);
-        } catch (error) {
+        } catch {
           // Error fetching quiz
         }
       }
@@ -212,7 +212,7 @@ export default function QuizEditor() {
           router.push(`/Courses/${courseId}/Quizzes/${newQuiz._id}`);
         }
       }
-    } catch (error) {
+    } catch {
       // Error saving quiz
     }
   };
@@ -617,7 +617,7 @@ export default function QuizEditor() {
 
             {questions.length === 0 ? (
               <div className="text-center py-5 border rounded">
-                <p className="text-muted">No questions yet. Click "+ New Question" to add one.</p>
+                <p className="text-muted">No questions yet. Click &quot;+ New Question&quot; to add one.</p>
               </div>
             ) : (
               <div>

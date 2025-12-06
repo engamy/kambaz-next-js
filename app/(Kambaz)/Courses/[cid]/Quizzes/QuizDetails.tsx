@@ -36,18 +36,25 @@ interface Quiz {
   [key: string]: unknown;
 }
 
+interface QuizAttempt {
+  _id?: string;
+  score?: number;
+  totalPoints?: number;
+  submittedAt?: string;
+  [key: string]: unknown;
+}
+
 export default function QuizDetails() {
   const params = useParams();
   const router = useRouter();
   const courseId = params.cid as string;
   const quizId = params.qid as string;
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-  const canEdit = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
   const isStudent = currentUser?.role === "STUDENT";
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
-  const [latestAttempt, setLatestAttempt] = useState<any>(null);
-  const [allAttempts, setAllAttempts] = useState<any[]>([]);
+  const [latestAttempt, setLatestAttempt] = useState<QuizAttempt | null>(null);
+  const [_allAttempts, setAllAttempts] = useState<QuizAttempt[]>([]);
   const [canTakeQuiz, setCanTakeQuiz] = useState(true);
 
   useEffect(() => {
@@ -56,7 +63,7 @@ export default function QuizDetails() {
         try {
           const fetchedQuiz = await client.findQuizById(quizId);
           setQuiz(fetchedQuiz);
-        } catch (error) {
+        } catch {
           // Error fetching quiz
         }
       }
@@ -82,7 +89,7 @@ export default function QuizDetails() {
               setCanTakeQuiz(false);
             }
           }
-        } catch (error) {
+        } catch {
           // Error fetching attempts
         }
       }
@@ -203,7 +210,7 @@ export default function QuizDetails() {
                     const updatedQuiz = { ...quiz, published: false };
                     await client.updateQuiz(updatedQuiz);
                     setQuiz({ ...quiz, published: false });
-                  } catch (error) {
+                  } catch {
                     // Error unpublishing quiz
                   }
                 }}
@@ -218,7 +225,7 @@ export default function QuizDetails() {
                     const updatedQuiz = { ...quiz, published: true };
                     await client.updateQuiz(updatedQuiz);
                     setQuiz({ ...quiz, published: true });
-                  } catch (error) {
+                  } catch {
                     // Error publishing quiz
                   }
                 }}

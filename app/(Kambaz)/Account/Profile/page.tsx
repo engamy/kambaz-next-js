@@ -226,9 +226,15 @@ export default function Profile() {
         Update 
       </Button>
       <Button 
-        onClick={() => {
-          dispatch(setCurrentUser(null));
-          window.location.href = "/Account/Signin";
+        onClick={async () => {
+          try {
+            await client.signout();
+          } catch (error) {
+            console.error("Error signing out:", error);
+          } finally {
+            dispatch(setCurrentUser(null));
+            window.location.href = "/Account/Signin";
+          }
         }} 
         variant="danger" 
         className="w-100"

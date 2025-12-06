@@ -61,7 +61,7 @@ export default function EnrollmentButton({
     setLoading(true);
     setError(null);
     try {
-      await coursesClient.enrollIntoCourse(courseId);
+      await enrollmentsClient.enrollInCourse(courseId);
       setIsEnrolled(true);
       if (onEnrollmentChange) {
         onEnrollmentChange();
@@ -99,7 +99,7 @@ export default function EnrollmentButton({
     setLoading(true);
     setError(null);
     try {
-      await coursesClient.unenrollFromCourse(courseId);
+      await enrollmentsClient.unenrollFromCourse(courseId);
       setIsEnrolled(false);
       if (onEnrollmentChange) {
         onEnrollmentChange();

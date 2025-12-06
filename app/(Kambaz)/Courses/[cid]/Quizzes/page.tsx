@@ -132,19 +132,8 @@ export default function Quizzes() {
     }
   };
 
-  const handleAddQuiz = async () => {
-    try {
-      const newQuiz = await client.createQuizForCourse(courseId, {
-        title: "New Quiz",
-        name: "New Quiz",
-        published: false,
-        points: 0,
-        questions: [],
-      });
-      router.push(`/Courses/${courseId}/Quizzes/${newQuiz._id}/Edit`);
-    } catch {
-      // Error creating quiz
-    }
+  const handleAddQuiz = () => {
+    router.push(`/Courses/${courseId}/Quizzes/new/Edit`);
   };
 
   const formatDate = (dateStr: string) => {

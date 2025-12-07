@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import KambazNavigation from "./Navigation";
 import "./styles.css";
 import store from "./store";
@@ -10,6 +10,10 @@ import FinalProjectInfoButton from "./FinalProjectInfoButton";
 export default function KambazLayout(
   { children }: Readonly<{ children: ReactNode }>
 ): React.JSX.Element {
+  useEffect(() => {
+    document.title = "Kambaz - CS4500";
+  }, []);
+
   return (
     <Provider store={store}>
       <Session>

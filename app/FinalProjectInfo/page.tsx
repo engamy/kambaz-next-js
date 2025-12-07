@@ -1,5 +1,10 @@
 import { Container, Card, CardBody } from "react-bootstrap";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Amy Eng CS4500 Final Project Info",
+};
 
 export default function FinalProjectInfo() {
   return (
@@ -15,6 +20,7 @@ export default function FinalProjectInfo() {
             <CardBody className="p-4">
               <h5 className="card-title text-primary mb-3">Student Information</h5>
               <p className="mb-2"><strong>Name:</strong> Amy Eng</p>
+              <p className="mb-2"><strong>Email:</strong> eng.am@northeastern.edu</p>
               <p className="mb-0"><strong>Team Members:</strong> None</p>
             </CardBody>
           </Card>
@@ -23,7 +29,7 @@ export default function FinalProjectInfo() {
           <Card className="h-100 shadow-sm">
             <CardBody className="p-4">
               <h5 className="card-title text-primary mb-3">Course Information</h5>
-              <p className="mb-2"><strong>Course:</strong> Web Development (CS4500), Section 11597</p>
+              <p className="mb-2"><strong>Course:</strong> Web Development (CS4500), Section 01, CRN 11597</p>
               <p className="mb-2"><strong>Professor:</strong> Jose Annunziato</p>
               <p className="mb-0"><strong>Semester:</strong> Fall 2025</p>
             </CardBody>

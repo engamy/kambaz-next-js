@@ -31,7 +31,19 @@ export default function FinalProjectInfo() {
               <h5 className="card-title text-primary mb-3">Course Information</h5>
               <p className="mb-2"><strong>Course:</strong> Web Development (CS4500), Section 01, CRN 11597</p>
               <p className="mb-2"><strong>Professor:</strong> Jose Annunziato</p>
-              <p className="mb-0"><strong>Semester:</strong> Fall 2025</p>
+              <p className="mb-2"><strong>Semester:</strong> Fall 2025</p>
+              <p className="mb-0">
+                <strong>Final Project:</strong> I chose to go with the{" "}
+                <Link 
+                  href="https://northeastern.instructure.com/courses/225902/assignments/2891714" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary"
+                >
+                  Quizzes assignment
+                </Link>{" "}
+                for the final project.
+              </p>
             </CardBody>
           </Card>
         </div>
